@@ -1,8 +1,8 @@
 package com.example.newsapp.repository
 
-import com.example.newsapp.db.ArticleDatabase
+import com.example.newsapp.db.ArticleDao
 
 class NewsRepository(
-    val db: ArticleDatabase
+    val dao: ArticleDao
 ) {
 }
