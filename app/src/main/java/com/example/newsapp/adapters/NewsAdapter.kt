@@ -11,9 +11,25 @@ import com.example.newsapp.R
 import com.example.newsapp.models.Article
 import kotlinx.android.synthetic.main.item_article_preview.view.*
 
-class NewsAdapter: ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCallback) {
+class NewsAdapter(private val onClick: (Article) -> Unit):
+    ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCallback) {
 
-    inner class ArticleViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
+    inner class ArticleViewHolder(itemView: View, val onClick: (Article) -> Unit) :
+        RecyclerView.ViewHolder(itemView) {
+
+        fun bind(article: Article){
+            itemView.apply {
+                Glide.with(this).load(article.urlToImage).into(ivArticleImage)
+                tvTitle.text = article.title
+                tvSource.text = article.source.name
+                tvDescription.text = article.description
+                tvPublishedAt.text = article.publishedAt
+                itemView.setOnClickListener {
+                    onClick(article)
+                }
+            }
+        }
+    }
 
     companion object{
         private val DifferCallback = object: DiffUtil.ItemCallback<Article>(){
@@ -34,33 +50,18 @@ class NewsAdapter: ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCal
                 R.layout.item_article_preview,
                 parent,
                 false
-            )
+            ),
+            onClick
         )
     }
 
-    private var onItemClickListener: ((Article)-> Unit)? = null
-
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = currentList[position]
-        holder.itemView.apply {
-            Glide.with(this).load(article.urlToImage).into(ivArticleImage)
-            tvTitle.text = article.title
-            tvSource.text = article.source.name
-            tvDescription.text = article.description
-            tvPublishedAt.text = article.publishedAt
-            setOnClickListener {
-                onItemClickListener?.let{
-                    it(article)
-                }
-            }
-        }
+        holder.bind(article)
     }
 
     override fun getItemCount(): Int {
         return currentList.size
     }
 
-    fun setOnItemClickListener(listener: (Article) -> Unit){
-        onItemClickListener = listener
-    }
 }
