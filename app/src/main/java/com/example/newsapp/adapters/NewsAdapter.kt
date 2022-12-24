@@ -38,6 +38,8 @@ class NewsAdapter: ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCal
         )
     }
 
+    private var onItemClickListener: ((Article)-> Unit)? = null
+
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = currentList[position]
         holder.itemView.apply {
@@ -58,7 +60,6 @@ class NewsAdapter: ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCal
         return currentList.size
     }
 
-    private var onItemClickListener: ((Article)-> Unit)? = null
     fun setOnItemClickListener(listener: (Article) -> Unit){
         onItemClickListener = listener
     }
