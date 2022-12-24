@@ -14,6 +14,7 @@ import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.ui.NewsViewModel
 import com.example.newsapp.ui.NewsViewModelProviderFactory
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
+import kotlinx.android.synthetic.main.fragment_saved_news.*
 
 class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
 
@@ -34,7 +35,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
         newsAdapter = NewsAdapter { article ->
             onClick(article)
         }
-        rvBreakingNews.apply {
+        rvSavedNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }

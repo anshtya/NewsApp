@@ -86,7 +86,7 @@ class SearchNewsFragment : Fragment(R.layout.fragment_search_news) {
         newsAdapter = NewsAdapter { article ->
             onClick(article)
         }
-        rvBreakingNews.apply {
+        rvSearchNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
