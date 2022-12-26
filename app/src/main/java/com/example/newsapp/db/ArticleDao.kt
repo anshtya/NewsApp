@@ -15,7 +15,7 @@ interface ArticleDao {
     suspend fun insert(article: Article): Long
 
     @Query("SELECT * FROM articles")
-    fun getAlArticles(): LiveData<List<Article>>
+    fun getAllArticles(): LiveData<List<Article>>
 
     @Delete
     suspend fun deleteArticle(article: Article)
