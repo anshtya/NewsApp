@@ -3,6 +3,7 @@ package com.example.newsapp.ui.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
@@ -31,6 +32,7 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         val article = args.article
         webView.apply {
             loadUrl(article.url)
+            webViewClient = WebViewClient()
             settings.javaScriptEnabled = true
         }
     }

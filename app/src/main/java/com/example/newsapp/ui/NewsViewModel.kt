@@ -23,19 +23,21 @@ class NewsViewModel(
         getBreakingNews("in")
     }
 
-    private fun getBreakingNews(countryCode: String) =
+    private fun getBreakingNews(countryCode: String) {
         viewModelScope.launch {
             breakingNews.postValue(Resource.Loading())
             val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
             breakingNews.postValue(handleBreakNewsResponse(response))
         }
+    }
 
-    fun searchNews(searchQuery: String) =
+    fun searchNews(searchQuery: String) {
         viewModelScope.launch {
             searchNews.postValue(Resource.Loading())
             val response = newsRepository.searchNews(searchQuery, searchNewsPage)
             searchNews.postValue(handleSearchNewsResponse(response))
         }
+    }
 
     private fun handleBreakNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
