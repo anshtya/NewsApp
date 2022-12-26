@@ -32,7 +32,7 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
 
         val article = args.article
         webView.apply {
-            loadUrl(article.url)
+            article.url?.let { loadUrl(it) }
             webViewClient = WebViewClient()
             settings.javaScriptEnabled = true
         }
