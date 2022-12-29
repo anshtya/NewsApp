@@ -1,9 +1,9 @@
 package com.example.newsapp.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AbsListView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -24,6 +24,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
     private val viewModel: NewsViewModel by activityViewModels{
         NewsViewModelProviderFactory(
+            activity?.application as NewsApplication,
             NewsRepository(
                 (activity?.application as NewsApplication).database.getArticleDao()
             )
@@ -52,7 +53,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let{ message ->
-                        Log.e("Breaking News Fragment", "An error occurred: $message")
+                        Toast.makeText(context,"An error occurred: $message",Toast.LENGTH_LONG).show()
                     }
                 }
 
@@ -77,7 +78,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     var isLastPage = false
     var isScrolling = false
 
-    val scrollListener = object: RecyclerView.OnScrollListener() {
+    private val scrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 

@@ -14,19 +14,27 @@ import kotlinx.android.synthetic.main.item_article_preview.view.*
 class NewsAdapter(private val onClick: (Article) -> Unit):
     ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCallback) {
 
-    inner class ArticleViewHolder(itemView: View, val onClick: (Article) -> Unit) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private var currentArticle: Article? = null
+
+        init {
+            itemView.setOnClickListener {
+                currentArticle?.let{ article ->
+                    onClick(article)
+                }
+            }
+        }
 
         fun bind(article: Article){
+            currentArticle = article
             itemView.apply {
                 Glide.with(this).load(article.urlToImage).into(ivArticleImage)
                 tvTitle.text = article.title
                 tvSource.text = article.source?.name
                 tvDescription.text = article.description
                 tvPublishedAt.text = article.publishedAt
-                itemView.setOnClickListener {
-                    onClick(article)
-                }
+
             }
         }
     }
@@ -50,18 +58,13 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
                 R.layout.item_article_preview,
                 parent,
                 false
-            ),
-            onClick
+            )
         )
     }
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
-        val article = currentList[position]
+        val article = getItem(position)
         holder.bind(article)
-    }
-
-    override fun getItemCount(): Int {
-        return currentList.size
     }
 
 }

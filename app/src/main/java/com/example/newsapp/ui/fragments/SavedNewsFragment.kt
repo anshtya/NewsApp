@@ -24,6 +24,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
 
     private val viewModel: NewsViewModel by activityViewModels{
         NewsViewModelProviderFactory(
+            activity?.application as NewsApplication,
             NewsRepository(
                 (activity?.application as NewsApplication).database.getArticleDao()
             )
