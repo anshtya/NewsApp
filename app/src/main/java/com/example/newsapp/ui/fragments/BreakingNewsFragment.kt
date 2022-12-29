@@ -6,6 +6,9 @@ import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +22,7 @@ import com.example.newsapp.ui.NewsViewModelProviderFactory
 import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.example.newsapp.util.Resource
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
+import kotlinx.coroutines.launch
 
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
@@ -36,29 +40,34 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let{ newsResponse ->
-                        newsAdapter.submitList(newsResponse.articles.toList())
-                        val totalPages = newsResponse.totalResults/ QUERY_PAGE_SIZE + 2
-                        isLastPage = viewModel.breakingNewsPage == totalPages
-                        if(isLastPage){
-                            rvBreakingNews.setPadding(0,0,0,0)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.breakingNews.collect { response ->
+                    when (response) {
+                        is Resource.Success -> {
+                            hideProgressBar()
+                            response.data?.let{ newsResponse ->
+                                newsAdapter.submitList(newsResponse.articles.toList())
+                                val totalPages = newsResponse.totalResults/ QUERY_PAGE_SIZE + 2
+                                isLastPage = viewModel.breakingNewsPage == totalPages
+                                if(isLastPage){
+                                    rvBreakingNews.setPadding(0,0,0,0)
+                                }
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            hideProgressBar()
+                            response.message?.let{ message ->
+                                Toast.makeText(context,"An error occurred: $message",Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+                        is Resource.Loading -> {
+                            showProgressBar()
                         }
                     }
-                }
-
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let{ message ->
-                        Toast.makeText(context,"An error occurred: $message",Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                is Resource.Loading -> {
-                    showProgressBar()
                 }
             }
         }

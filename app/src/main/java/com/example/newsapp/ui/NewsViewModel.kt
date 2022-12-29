@@ -6,13 +6,15 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.NewsApplication
 import com.example.newsapp.models.Article
 import com.example.newsapp.models.NewsResponse
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -22,48 +24,55 @@ class NewsViewModel(
     private val newsRepository: NewsRepository
 ): AndroidViewModel(app) {
 
-    val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    val savedNews: Flow<List<Article>> = newsRepository.getSavedNews()
+
+    private val _breakingNews = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
+    val breakingNews: StateFlow<Resource<NewsResponse>>
+        get() = _breakingNews
     var breakingNewsPage = 1
     private var breakingNewsResponse: NewsResponse? = null
 
-    val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    private val _searchNews = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
+    val searchNews: StateFlow<Resource<NewsResponse>>
+        get() = _searchNews
     var searchNewsPage = 1
     private var searchNewsResponse: NewsResponse? = null
+    private var oldSearchQuery: String? = null
+    private var newSearchQuery: String? = null
 
     init {
         getBreakingNews("in")
     }
 
     fun getBreakingNews(countryCode: String) = viewModelScope.launch {
-        breakingNews.postValue(Resource.Loading())
         try {
             if(hasInternetConnection()){
                 val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
-                breakingNews.postValue(handleBreakNewsResponse(response))
+                _breakingNews.value = handleBreakNewsResponse(response)
             } else {
-                breakingNews.postValue(Resource.Error("No Internet Connection"))
+                _breakingNews.value = Resource.Error("No Internet Connection")
             }
         } catch (t: Throwable){
             when(t){
-                is IOException -> breakingNews.postValue(Resource.Error("Network Failure"))
-                else -> breakingNews.postValue(Resource.Error("Conversion Error"))
+                is IOException -> _breakingNews.value = Resource.Error("Network Failure")
+                else -> _breakingNews.value = Resource.Error("Conversion Error")
             }
         }
     }
 
     fun searchNews(searchQuery: String) = viewModelScope.launch {
-        searchNews.postValue(Resource.Loading())
+        newSearchQuery = searchQuery
         try {
             if(hasInternetConnection()){
                 val response = newsRepository.searchNews(searchQuery, searchNewsPage)
-                searchNews.postValue(handleSearchNewsResponse(response))
+                _searchNews.value = handleSearchNewsResponse(response)
             } else {
-                searchNews.postValue(Resource.Error("No Internet Connection"))
+                _searchNews.value = Resource.Error("No Internet Connection")
             }
         } catch (t: Throwable){
             when(t){
-                is IOException -> searchNews.postValue(Resource.Error("Network Failure"))
-                else -> searchNews.postValue(Resource.Error("Conversion Error"))
+                is IOException -> _searchNews.value = Resource.Error("Network Failure")
+                else -> _searchNews.value = Resource.Error("Conversion Error")
             }
         }
     }
@@ -88,10 +97,12 @@ class NewsViewModel(
     private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
-                searchNewsPage++
-                if(searchNewsResponse == null){
+                if(searchNewsResponse == null || oldSearchQuery != newSearchQuery){
+                    searchNewsPage = 1
+                    oldSearchQuery = newSearchQuery
                     searchNewsResponse  = resultResponse
                 } else {
+                    searchNewsPage++
                     val oldArticles = searchNewsResponse?.articles
                     val newArticles = resultResponse.articles
                     oldArticles?.addAll(newArticles)
@@ -107,8 +118,6 @@ class NewsViewModel(
             newsRepository.insert(article)
         }
     }
-
-    fun getSavedNews() = newsRepository.getSavedNews()
 
     fun deleteArticle(article: Article) {
         viewModelScope.launch {
