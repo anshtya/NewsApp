@@ -62,6 +62,9 @@ class NewsViewModel(
 
     fun searchNews(searchQuery: String) = viewModelScope.launch {
         newSearchQuery = searchQuery
+        if(newSearchQuery != oldSearchQuery) {
+            searchNewsPage = 1
+        }
         try {
             if(hasInternetConnection()){
                 val response = newsRepository.searchNews(searchQuery, searchNewsPage)
@@ -97,12 +100,11 @@ class NewsViewModel(
     private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
+                searchNewsPage++
                 if(searchNewsResponse == null || oldSearchQuery != newSearchQuery){
-                    searchNewsPage = 1
                     oldSearchQuery = newSearchQuery
                     searchNewsResponse  = resultResponse
                 } else {
-                    searchNewsPage++
                     val oldArticles = searchNewsResponse?.articles
                     val newArticles = resultResponse.articles
                     oldArticles?.addAll(newArticles)
