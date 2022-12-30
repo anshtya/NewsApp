@@ -12,9 +12,7 @@ import com.example.newsapp.models.Article
 import com.example.newsapp.models.NewsResponse
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.util.Resource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -24,7 +22,12 @@ class NewsViewModel(
     private val newsRepository: NewsRepository
 ): AndroidViewModel(app) {
 
-    val savedNews: Flow<List<Article>> = newsRepository.getSavedNews()
+    val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = listOf()
+        )
 
     private val _breakingNews = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
     val breakingNews: StateFlow<Resource<NewsResponse>>
