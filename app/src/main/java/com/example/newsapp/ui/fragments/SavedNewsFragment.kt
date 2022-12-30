@@ -11,29 +11,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newsapp.NewsApplication
 import com.example.newsapp.R
 import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.models.Article
-import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.ui.NewsViewModel
-import com.example.newsapp.ui.NewsViewModelProviderFactory
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_saved_news.*
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
 
     private lateinit var newsAdapter: NewsAdapter
 
-    private val viewModel: NewsViewModel by activityViewModels{
-        NewsViewModelProviderFactory(
-            activity?.application as NewsApplication,
-            NewsRepository(
-                (activity?.application as NewsApplication).database.getArticleDao()
-            )
-        )
-    }
+    private val viewModel: NewsViewModel by activityViewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecyclerView()
 

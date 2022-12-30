@@ -12,28 +12,20 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newsapp.NewsApplication
 import com.example.newsapp.R
 import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.models.Article
-import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.ui.NewsViewModel
-import com.example.newsapp.ui.NewsViewModelProviderFactory
 import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.example.newsapp.util.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
-    private val viewModel: NewsViewModel by activityViewModels{
-        NewsViewModelProviderFactory(
-            activity?.application as NewsApplication,
-            NewsRepository(
-                (activity?.application as NewsApplication).database.getArticleDao()
-            )
-        )
-    }
+    private val viewModel: NewsViewModel by activityViewModels()
     private lateinit var newsAdapter: NewsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

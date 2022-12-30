@@ -3,8 +3,9 @@ package com.example.newsapp.repository
 import com.example.newsapp.api.RetrofitInstance
 import com.example.newsapp.db.ArticleDao
 import com.example.newsapp.models.Article
+import javax.inject.Inject
 
-class NewsRepository(
+class NewsRepository @Inject constructor(
     private val dao: ArticleDao
 ) {
     suspend fun getBreakingNews(countryCode: String, pageNumber: Int) =
