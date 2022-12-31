@@ -5,13 +5,13 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp.NewsApplication
 import com.example.newsapp.models.Article
 import com.example.newsapp.models.NewsResponse
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.util.Resource
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -21,9 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(
-    app: Application,
+    private val app: Application,
     private val newsRepository: NewsRepository
-): AndroidViewModel(app) {
+): ViewModel() {
 
     val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
         .stateIn(
@@ -135,7 +135,7 @@ class NewsViewModel @Inject constructor(
 
     private fun hasInternetConnection(): Boolean{
         var result = false
-        val connectivityManager = getApplication<NewsApplication>().getSystemService(
+        val connectivityManager = getApplication(app).getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
