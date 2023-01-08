@@ -5,7 +5,6 @@ News app created using Kotlin. This app uses NewsAPI for displaying and searchin
 
 
 
-
 ## Installation
 
 To clone the project
