@@ -3,6 +3,7 @@ package com.example.newsapp.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -64,7 +65,9 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = getItem(position)
-        holder.bind(article)
+        if (article != null) {
+            holder.bind(article)
+        }
     }
 
 }
