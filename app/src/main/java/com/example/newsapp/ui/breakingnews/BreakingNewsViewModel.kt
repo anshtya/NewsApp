@@ -1,4 +1,4 @@
-package com.example.newsapp.ui
+package com.example.newsapp.ui.breakingnews
 
 import android.app.Application
 import android.content.Context
@@ -14,16 +14,10 @@ import com.example.newsapp.models.Article
 import com.example.newsapp.models.NewsResponse
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.util.Resource
-import dagger.hilt.android.internal.Contexts.getApplication
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import retrofit2.Response
-import java.io.IOException
-import javax.inject.Inject
 
-@HiltViewModel
-class NewsViewModel(
+class BreakingNewsViewModel(
     app: Application,
     private val newsRepository: NewsRepository
 ): AndroidViewModel(app) {
@@ -168,14 +162,14 @@ class NewsViewModel(
     }
 }
 
-class NewsViewModelProviderFactory(
+class BreakingNewsViewModelProviderFactory(
     private val app: Application,
     private val repository: NewsRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(BreakingNewsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return NewsViewModel(app, repository) as T
+            return BreakingNewsViewModel(app, repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

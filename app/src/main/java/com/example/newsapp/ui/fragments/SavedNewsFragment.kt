@@ -1,24 +1,8 @@
 package com.example.newsapp.ui.fragments
 
-import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
-import com.example.newsapp.adapters.NewsAdapter
-import com.example.newsapp.models.Article
-import com.example.newsapp.ui.NewsViewModel
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_saved_news.*
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {

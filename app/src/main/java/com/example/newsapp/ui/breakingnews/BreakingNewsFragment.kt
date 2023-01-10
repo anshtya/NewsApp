@@ -1,24 +1,20 @@
-package com.example.newsapp.ui.fragments
+package com.example.newsapp.ui.breakingnews
 
 import android.os.Bundle
 import android.view.View
-import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.NewsApplication
 import com.example.newsapp.R
-import com.example.newsapp.adapters.NewsAdapter
+import com.example.newsapp.ui.NewsAdapter
 import com.example.newsapp.models.Article
+import com.example.newsapp.network.NewsApiService
 import com.example.newsapp.repository.NewsRepository
-import com.example.newsapp.ui.NewsViewModel
-import com.example.newsapp.ui.NewsViewModelProviderFactory
 import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.example.newsapp.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,11 +24,12 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
-    private val viewModel: NewsViewModel by activityViewModels {
-        NewsViewModelProviderFactory(
+    private val viewModel: BreakingNewsViewModel by activityViewModels {
+        BreakingNewsViewModelProviderFactory(
             activity?.application as NewsApplication,
             NewsRepository(
-                (activity?.application as NewsApplication).database.getArticleDao()
+                (activity?.application as NewsApplication).database.getArticleDao(),
+                NewsApiService.apiService
             )
         )
     }
