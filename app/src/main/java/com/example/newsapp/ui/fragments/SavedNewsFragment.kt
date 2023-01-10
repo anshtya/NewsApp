@@ -1,11 +1,25 @@
 package com.example.newsapp.ui.fragments
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.newsapp.R
+import com.example.newsapp.databinding.FragmentArticleBinding
+import com.example.newsapp.databinding.FragmentSavedNewsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
+class SavedNewsFragment : Fragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = FragmentSavedNewsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
 //    private lateinit var newsAdapter: NewsAdapter
 //

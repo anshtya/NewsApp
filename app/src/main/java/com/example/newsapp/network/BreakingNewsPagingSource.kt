@@ -3,13 +3,14 @@ package com.example.newsapp.network
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.newsapp.models.Article
-import com.example.newsapp.util.Constants
+import com.example.newsapp.util.Constants.Companion.BREAKING_NEWS_PAGE
+import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import retrofit2.HttpException
 import java.io.IOException
 
 class BreakingNewsPagingSource(
     private val service: NewsApiService,
-    private val query: String
+    private val countryCode: String
 ): PagingSource<Int, Article>() {
     override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -19,21 +20,21 @@ class BreakingNewsPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
-        val position = params.key ?: Constants.BREAKING_NEWS_PAGE
+        val position = params.key ?: BREAKING_NEWS_PAGE
 //        val apiQuery = query
         return try {
-            val response = NewsApiService.apiService.getBreakingNews(Constants.COUNTRY_CODE, position)
+            val response = service.getBreakingNews(countryCode, position)
             val news = response.articles
             val nextKey = if (news.isEmpty()) {
                 null
             } else {
                 // initial load size = 3 * NETWORK_PAGE_SIZE
                 // ensure we're not requesting duplicating items, at the 2nd request
-                position + (params.loadSize / Constants.QUERY_PAGE_SIZE)
+                position + (params.loadSize / QUERY_PAGE_SIZE)
             }
             LoadResult.Page(
                 data = news,
-                prevKey = if (position == Constants.BREAKING_NEWS_PAGE) null else position - 1,
+                prevKey = if (position == BREAKING_NEWS_PAGE) null else position - 1,
                 nextKey = nextKey
             )
         } catch (exception: IOException) {

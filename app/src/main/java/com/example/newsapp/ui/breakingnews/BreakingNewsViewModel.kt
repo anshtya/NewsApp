@@ -9,6 +9,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.newsapp.NewsApplication
 import com.example.newsapp.models.Article
 import com.example.newsapp.models.NewsResponse
@@ -22,29 +24,34 @@ class BreakingNewsViewModel(
     private val newsRepository: NewsRepository
 ): AndroidViewModel(app) {
 
-    val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = listOf()
-        )
-
-    private val _breakingNews = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
-    val breakingNews: StateFlow<Resource<NewsResponse>>
-        get() = _breakingNews
-    var breakingNewsPage = 1
-    private var breakingNewsResponse: NewsResponse? = null
-
-    private val _searchNews = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
-    val searchNews: StateFlow<Resource<NewsResponse>>
-        get() = _searchNews
-    var searchNewsPage = 1
-    private var searchNewsResponse: NewsResponse? = null
-    private var oldSearchQuery: String? = null
-    private var newSearchQuery: String? = null
+    lateinit var breakingNews: Flow<PagingData<Article>>
+//    val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.WhileSubscribed(5000),
+//            initialValue = listOf()
+//        )
+//
+//    private val _breakingNews = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
+//    val breakingNews: StateFlow<Resource<NewsResponse>>
+//        get() = _breakingNews
+//    var breakingNewsPage = 1
+//    private var breakingNewsResponse: NewsResponse? = null
+//
+//    private val _searchNews = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
+//    val searchNews: StateFlow<Resource<NewsResponse>>
+//        get() = _searchNews
+//    var searchNewsPage = 1
+//    private var searchNewsResponse: NewsResponse? = null
+//    private var oldSearchQuery: String? = null
+//    private var newSearchQuery: String? = null
 
     init {
-//        getBreakingNews("in")
+
+        viewModelScope.launch {
+            breakingNews = newsRepository.getBreakingNews("in").cachedIn(this)
+        }
+
     }
 
 //    fun getBreakingNews(countryCode: String) = viewModelScope.launch {

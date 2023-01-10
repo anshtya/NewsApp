@@ -1,7 +1,9 @@
 package com.example.newsapp.ui.breakingnews
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -11,18 +13,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.NewsApplication
 import com.example.newsapp.R
-import com.example.newsapp.ui.NewsAdapter
-import com.example.newsapp.models.Article
+import com.example.newsapp.databinding.FragmentBreakingNewsBinding
 import com.example.newsapp.network.NewsApiService
 import com.example.newsapp.repository.NewsRepository
-import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
-import com.example.newsapp.util.Resource
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_breaking_news.*
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
-class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
+//@AndroidEntryPoint
+class BreakingNewsFragment : Fragment() {
 
     private val viewModel: BreakingNewsViewModel by activityViewModels {
         BreakingNewsViewModelProviderFactory(
@@ -33,7 +30,16 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
             )
         )
     }
-    private lateinit var newsAdapter: NewsAdapter
+    private lateinit var binding: FragmentBreakingNewsBinding
+    private lateinit var pagingNewsAdapter: PagingNewsAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentBreakingNewsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,49 +48,52 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.breakingNews.collect { response ->
-                    when (response) {
-                        is Resource.Success -> {
-                            hideProgressBar()
-                            response.data?.let{ newsResponse ->
-                                newsAdapter.submitList(newsResponse.articles.toList())
-                                val totalPages = newsResponse.totalResults/ QUERY_PAGE_SIZE + 2
-                                isLastPage = viewModel.breakingNewsPage == totalPages
-                                if(isLastPage){
-                                    rvBreakingNews.setPadding(0,0,0,0)
-                                }
-                            }
-                        }
-
-                        is Resource.Error -> {
-                            hideProgressBar()
-                            response.message?.let{ message ->
-                                Toast.makeText(context,"An error occurred: $message",Toast.LENGTH_LONG).show()
-                            }
-                        }
-
-                        is Resource.Loading -> {
-                            showProgressBar()
-                        }
-                    }
+                viewModel.breakingNews.collect{ articles ->
+                    pagingNewsAdapter.submitData(articles)
                 }
-            }
+//                viewModel.breakingNews.collect { response ->
+//                    when (response) {
+//                        is Resource.Success -> {
+//                            hideProgressBar()
+//                            response.data?.let{ newsResponse ->
+//                                newsAdapter.submitList(newsResponse.articles.toList())
+//                                val totalPages = newsResponse.totalResults/ QUERY_PAGE_SIZE + 2
+//                                isLastPage = viewModel.breakingNewsPage == totalPages
+//                                if(isLastPage){
+//                                    rvBreakingNews.setPadding(0,0,0,0)
+//                                }
+//                            }
+//                        }
+//
+//                        is Resource.Error -> {
+//                            hideProgressBar()
+//                            response.message?.let{ message ->
+//                                Toast.makeText(context,"An error occurred: $message",Toast.LENGTH_LONG).show()
+//                            }
+//                        }
+//
+//                        is Resource.Loading -> {
+//                            showProgressBar()
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 
-    private fun hideProgressBar(){
-        paginationProgressBar.visibility = View.INVISIBLE
-        isLoading = false
-    }
-
-    private fun showProgressBar(){
-        paginationProgressBar.visibility = View.VISIBLE
-        isLoading = true
-    }
-
-    var isLoading = false
-    var isLastPage = false
-    var isScrolling = false
+//    private fun hideProgressBar(){
+//        paginationProgressBar.visibility = View.INVISIBLE
+//        isLoading = false
+//    }
+//
+//    private fun showProgressBar(){
+//        paginationProgressBar.visibility = View.VISIBLE
+//        isLoading = true
+//    }
+//
+//    var isLoading = false
+//    var isLastPage = false
+//    var isScrolling = false
 
 //    private val scrollListener = object: RecyclerView.OnScrollListener() {
 //        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -114,19 +123,17 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 //            }
 //        }
 //    }
-
+    }
     private fun setupRecyclerView(){
-        newsAdapter = NewsAdapter { article ->
-            onClick(article)
-        }
-        rvBreakingNews.apply {
-            adapter = newsAdapter
+        pagingNewsAdapter = PagingNewsAdapter()
+        binding.rvBreakingNews.apply {
+            adapter = pagingNewsAdapter
             layoutManager = LinearLayoutManager(activity)
 //            addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }
     }
 
-    private fun onClick(article: Article){
+//    private fun onClick(article: Article){
 //        val bundle = Bundle().apply {
 //            putSerializable("article", article)
 //        }
@@ -134,5 +141,5 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 //            R.id.action_breakingNewsFragment_to_articleFragment,
 //            bundle
 //        )
-    }
+//    }
 }

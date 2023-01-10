@@ -1,28 +1,28 @@
-package com.example.newsapp.ui
+package com.example.newsapp.ui.breakingnews
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.databinding.ItemArticlePreviewBinding
 import com.example.newsapp.models.Article
 
-class NewsAdapter(private val onClick: (Article) -> Unit):
-    ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCallback) {
+class PagingNewsAdapter:
+    PagingDataAdapter<Article, PagingNewsAdapter.ArticleViewHolder>(DifferCallback) {
 
     inner class ArticleViewHolder(private val binding: ItemArticlePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private var currentArticle: Article? = null
 
-        init {
-            itemView.setOnClickListener {
-                currentArticle?.let{ article ->
-                    onClick(article)
-                }
-            }
-        }
+//        init {
+//            itemView.setOnClickListener {
+//                currentArticle?.let{ article ->
+//                    onClick(article)
+//                }
+//            }
+//        }
 
         fun bind(article: Article){
             currentArticle = article
@@ -32,7 +32,6 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
                 tvSource.text = article.source?.name
                 tvDescription.text = article.description
                 tvPublishedAt.text = article.publishedAt
-
             }
         }
     }
@@ -51,7 +50,7 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        val binding =  ItemArticlePreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemArticlePreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ArticleViewHolder(binding)
     }
 
