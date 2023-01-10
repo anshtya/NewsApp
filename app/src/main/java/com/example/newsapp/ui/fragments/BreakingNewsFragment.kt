@@ -12,10 +12,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.newsapp.NewsApplication
 import com.example.newsapp.R
 import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.models.Article
+import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.ui.NewsViewModel
+import com.example.newsapp.ui.NewsViewModelProviderFactory
 import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.example.newsapp.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +28,14 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
-    private val viewModel: NewsViewModel by activityViewModels()
+    private val viewModel: NewsViewModel by activityViewModels {
+        NewsViewModelProviderFactory(
+            activity?.application as NewsApplication,
+            NewsRepository(
+                (activity?.application as NewsApplication).database.getArticleDao()
+            )
+        )
+    }
     private lateinit var newsAdapter: NewsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,34 +89,34 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     var isLastPage = false
     var isScrolling = false
 
-    private val scrollListener = object: RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-            val visibleItemCount = layoutManager.childCount
-            val totalItemCount = layoutManager.itemCount
-
-            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
-            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
-            val isNotAtBeginning = firstVisibleItemPosition >= 0
-            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
-            val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
-                    isTotalMoreThanVisible && isScrolling
-            if(shouldPaginate){
-                viewModel.getBreakingNews("in")
-                isScrolling = false
-            }
-        }
-
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                isScrolling = true
-            }
-        }
-    }
+//    private val scrollListener = object: RecyclerView.OnScrollListener() {
+//        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//            super.onScrolled(recyclerView, dx, dy)
+//
+//            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+//            val visibleItemCount = layoutManager.childCount
+//            val totalItemCount = layoutManager.itemCount
+//
+//            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+//            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+//            val isNotAtBeginning = firstVisibleItemPosition >= 0
+//            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
+//            val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
+//                    isTotalMoreThanVisible && isScrolling
+//            if(shouldPaginate){
+//                viewModel.getBreakingNews("in")
+//                isScrolling = false
+//            }
+//        }
+//
+//        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//            super.onScrollStateChanged(recyclerView, newState)
+//            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+//                isScrolling = true
+//            }
+//        }
+//    }
 
     private fun setupRecyclerView(){
         newsAdapter = NewsAdapter { article ->
@@ -115,17 +125,17 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         rvBreakingNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
-            addOnScrollListener(this@BreakingNewsFragment.scrollListener)
+//            addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }
     }
 
     private fun onClick(article: Article){
-        val bundle = Bundle().apply {
-            putSerializable("article", article)
-        }
-        findNavController().navigate(
-            R.id.action_breakingNewsFragment_to_articleFragment,
-            bundle
-        )
+//        val bundle = Bundle().apply {
+//            putSerializable("article", article)
+//        }
+//        findNavController().navigate(
+//            R.id.action_breakingNewsFragment_to_articleFragment,
+//            bundle
+//        )
     }
 }

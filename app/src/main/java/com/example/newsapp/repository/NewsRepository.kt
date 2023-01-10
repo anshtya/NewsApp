@@ -5,7 +5,7 @@ import com.example.newsapp.db.ArticleDao
 import com.example.newsapp.models.Article
 import javax.inject.Inject
 
-class NewsRepository @Inject constructor(
+class NewsRepository (
     private val dao: ArticleDao
 ) {
     suspend fun getBreakingNews(countryCode: String, pageNumber: Int) =

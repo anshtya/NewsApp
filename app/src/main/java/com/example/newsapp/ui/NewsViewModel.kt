@@ -5,8 +5,11 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.newsapp.NewsApplication
 import com.example.newsapp.models.Article
 import com.example.newsapp.models.NewsResponse
 import com.example.newsapp.repository.NewsRepository
@@ -20,10 +23,10 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class NewsViewModel @Inject constructor(
-    private val app: Application,
+class NewsViewModel(
+    app: Application,
     private val newsRepository: NewsRepository
-): ViewModel() {
+): AndroidViewModel(app) {
 
     val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
         .stateIn(
@@ -47,85 +50,85 @@ class NewsViewModel @Inject constructor(
     private var newSearchQuery: String? = null
 
     init {
-        getBreakingNews("in")
+//        getBreakingNews("in")
     }
 
-    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
-        try {
-            if(hasInternetConnection()){
-                val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
-                _breakingNews.value = handleBreakNewsResponse(response)
-            } else {
-                _breakingNews.value = Resource.Error("No Internet Connection")
-            }
-        } catch (t: Throwable){
-            when(t){
-                is IOException -> _breakingNews.value = Resource.Error("Network Failure")
-                else -> _breakingNews.value = Resource.Error("Conversion Error")
-            }
-        }
-    }
+//    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
+//        try {
+//            if(hasInternetConnection()){
+//                val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
+//                _breakingNews.value = handleBreakNewsResponse(response)
+//            } else {
+//                _breakingNews.value = Resource.Error("No Internet Connection")
+//            }
+//        } catch (t: Throwable){
+//            when(t){
+//                is IOException -> _breakingNews.value = Resource.Error("Network Failure")
+//                else -> _breakingNews.value = Resource.Error("Conversion Error")
+//            }
+//        }
+//    }
 
-    fun searchNews(searchQuery: String) = viewModelScope.launch {
-        newSearchQuery = searchQuery
-        if(newSearchQuery != oldSearchQuery) {
-            searchNewsPage = 1
-        }
-        try {
-            if(hasInternetConnection()){
-                val response = newsRepository.searchNews(searchQuery, searchNewsPage)
-                _searchNews.value = handleSearchNewsResponse(response)
-            } else {
-                _searchNews.value = Resource.Error("No Internet Connection")
-            }
-        } catch (t: Throwable){
-            when(t){
-                is IOException -> _searchNews.value = Resource.Error("Network Failure")
-                else -> _searchNews.value = Resource.Error("Conversion Error")
-            }
-        }
-    }
+//    fun searchNews(searchQuery: String) = viewModelScope.launch {
+//        newSearchQuery = searchQuery
+//        if(newSearchQuery != oldSearchQuery) {
+//            searchNewsPage = 1
+//        }
+//        try {
+//            if(hasInternetConnection()){
+//                val response = newsRepository.searchNews(searchQuery, searchNewsPage)
+//                _searchNews.value = handleSearchNewsResponse(response)
+//            } else {
+//                _searchNews.value = Resource.Error("No Internet Connection")
+//            }
+//        } catch (t: Throwable){
+//            when(t){
+//                is IOException -> _searchNews.value = Resource.Error("Network Failure")
+//                else -> _searchNews.value = Resource.Error("Conversion Error")
+//            }
+//        }
+//    }
 
-    private fun handleBreakNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                breakingNewsPage++
-                if(breakingNewsResponse == null){
-                    breakingNewsResponse = resultResponse
-                } else {
-                    val oldArticles = breakingNewsResponse?.articles
-                    val newArticles = resultResponse.articles
-                    oldArticles?.addAll(newArticles)
-                }
-                return Resource.Success(breakingNewsResponse ?: resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                searchNewsPage++
-                if(searchNewsResponse == null || oldSearchQuery != newSearchQuery){
-                    oldSearchQuery = newSearchQuery
-                    searchNewsResponse  = resultResponse
-                } else {
-                    val oldArticles = searchNewsResponse?.articles
-                    val newArticles = resultResponse.articles
-                    oldArticles?.addAll(newArticles)
-                }
-                return Resource.Success(searchNewsResponse ?: resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    fun saveArticle(article: Article) {
-        viewModelScope.launch {
-            newsRepository.insert(article)
-        }
-    }
+//    private fun handleBreakNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+//        if (response.isSuccessful) {
+//            response.body()?.let { resultResponse ->
+//                breakingNewsPage++
+//                if(breakingNewsResponse == null){
+//                    breakingNewsResponse = resultResponse
+//                } else {
+//                    val oldArticles = breakingNewsResponse?.articles
+//                    val newArticles = resultResponse.articles
+//                    oldArticles?.addAll(newArticles)
+//                }
+//                return Resource.Success(breakingNewsResponse ?: resultResponse)
+//            }
+//        }
+//        return Resource.Error(response.message())
+//    }
+//
+//    private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+//        if (response.isSuccessful) {
+//            response.body()?.let { resultResponse ->
+//                searchNewsPage++
+//                if(searchNewsResponse == null || oldSearchQuery != newSearchQuery){
+//                    oldSearchQuery = newSearchQuery
+//                    searchNewsResponse  = resultResponse
+//                } else {
+//                    val oldArticles = searchNewsResponse?.articles
+//                    val newArticles = resultResponse.articles
+//                    oldArticles?.addAll(newArticles)
+//                }
+//                return Resource.Success(searchNewsResponse ?: resultResponse)
+//            }
+//        }
+//        return Resource.Error(response.message())
+//    }
+//
+//    fun saveArticle(article: Article) {
+//        viewModelScope.launch {
+//            newsRepository.insert(article)
+//        }
+//    }
 
     fun deleteArticle(article: Article) {
         viewModelScope.launch {
@@ -135,7 +138,7 @@ class NewsViewModel @Inject constructor(
 
     private fun hasInternetConnection(): Boolean{
         var result = false
-        val connectivityManager = getApplication(app).getSystemService(
+        val connectivityManager = getApplication<NewsApplication>().getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -162,5 +165,18 @@ class NewsViewModel @Inject constructor(
             }
         }
         return result
+    }
+}
+
+class NewsViewModelProviderFactory(
+    private val app: Application,
+    private val repository: NewsRepository
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return NewsViewModel(app, repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
