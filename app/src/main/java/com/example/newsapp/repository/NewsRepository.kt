@@ -6,26 +6,26 @@ import androidx.paging.PagingData
 import com.example.newsapp.db.ArticleDao
 import com.example.newsapp.models.Article
 import com.example.newsapp.network.BreakingNewsPagingSource
-import com.example.newsapp.network.NewsApiService
-import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
+import com.example.newsapp.network.NewsApi
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class NewsRepository (
+class NewsRepository @Inject constructor(
     private val dao: ArticleDao,
-    private val service: NewsApiService
+    private val newsApi: NewsApi
 ) {
-    suspend fun getBreakingNews(countryCode: String): Flow<PagingData<Article>> {
+    fun getBreakingNews(countryCode: String): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(
-                pageSize = QUERY_PAGE_SIZE,
+                pageSize = 20,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { BreakingNewsPagingSource(service, countryCode) }
+            pagingSourceFactory = { BreakingNewsPagingSource(newsApi, countryCode) }
         ).flow
     }
 
     suspend fun searchNews(searchQuery: String, pageNumber: Int) =
-        NewsApiService.apiService.searchForNews(searchQuery, pageNumber)
+        newsApi.searchForNews(searchQuery, pageNumber)
 
     suspend fun insert(article: Article) = dao.insert(article)
 

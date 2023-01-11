@@ -4,32 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newsapp.NewsApplication
-import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentBreakingNewsBinding
-import com.example.newsapp.network.NewsApiService
-import com.example.newsapp.repository.NewsRepository
+import com.example.newsapp.ui.NewsLoadStateAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-//@AndroidEntryPoint
+@AndroidEntryPoint
 class BreakingNewsFragment : Fragment() {
 
-    private val viewModel: BreakingNewsViewModel by activityViewModels {
-        BreakingNewsViewModelProviderFactory(
-            activity?.application as NewsApplication,
-            NewsRepository(
-                (activity?.application as NewsApplication).database.getArticleDao(),
-                NewsApiService.apiService
-            )
-        )
-    }
+    private val viewModel: BreakingNewsViewModel by activityViewModels()
     private lateinit var binding: FragmentBreakingNewsBinding
     private lateinit var pagingNewsAdapter: PagingNewsAdapter
 
@@ -48,7 +38,7 @@ class BreakingNewsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.breakingNews.collect{ articles ->
+                viewModel.breakingNews.collectLatest{ articles ->
                     pagingNewsAdapter.submitData(articles)
                 }
 //                viewModel.breakingNews.collect { response ->
@@ -127,7 +117,7 @@ class BreakingNewsFragment : Fragment() {
     private fun setupRecyclerView(){
         pagingNewsAdapter = PagingNewsAdapter()
         binding.rvBreakingNews.apply {
-            adapter = pagingNewsAdapter
+            adapter = pagingNewsAdapter.withLoadStateFooter(NewsLoadStateAdapter())
             layoutManager = LinearLayoutManager(activity)
 //            addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }

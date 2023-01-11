@@ -1,30 +1,22 @@
 package com.example.newsapp.ui.breakingnews
 
-import android.app.Application
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.newsapp.NewsApplication
 import com.example.newsapp.models.Article
-import com.example.newsapp.models.NewsResponse
 import com.example.newsapp.repository.NewsRepository
-import com.example.newsapp.util.Resource
+import com.example.newsapp.util.Constants.Companion.COUNTRY_CODE
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BreakingNewsViewModel(
-    app: Application,
+@HiltViewModel
+class BreakingNewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository
-): AndroidViewModel(app) {
+): ViewModel() {
 
-    lateinit var breakingNews: Flow<PagingData<Article>>
+    val breakingNews: Flow<PagingData<Article>> = newsRepository.getBreakingNews(COUNTRY_CODE).cachedIn(viewModelScope)
 //    val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
 //        .stateIn(
 //            scope = viewModelScope,
@@ -46,13 +38,9 @@ class BreakingNewsViewModel(
 //    private var oldSearchQuery: String? = null
 //    private var newSearchQuery: String? = null
 
-    init {
-
-        viewModelScope.launch {
-            breakingNews = newsRepository.getBreakingNews("in").cachedIn(this)
-        }
-
-    }
+//    init {
+//
+//    }
 
 //    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
 //        try {
@@ -131,53 +119,40 @@ class BreakingNewsViewModel(
 //        }
 //    }
 
-    fun deleteArticle(article: Article) {
-        viewModelScope.launch {
-            newsRepository.delete(article)
-        }
-    }
+//    fun deleteArticle(article: Article) {
+//        viewModelScope.launch {
+//            newsRepository.delete(article)
+//        }
+//    }
 
-    private fun hasInternetConnection(): Boolean{
-        var result = false
-        val connectivityManager = getApplication<NewsApplication>().getSystemService(
-            Context.CONNECTIVITY_SERVICE
-        ) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val networkCapabilities = connectivityManager.activeNetwork ?: return false
-            val actNw =
-                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
-            result = when {
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                else -> false
-            }
-        } else {
-            connectivityManager.run {
-                connectivityManager.activeNetworkInfo?.run {
-                    result = when (type) {
-                        ConnectivityManager.TYPE_WIFI -> true
-                        ConnectivityManager.TYPE_MOBILE -> true
-                        ConnectivityManager.TYPE_ETHERNET -> true
-                        else -> false
-                    }
-
-                }
-            }
-        }
-        return result
-    }
-}
-
-class BreakingNewsViewModelProviderFactory(
-    private val app: Application,
-    private val repository: NewsRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(BreakingNewsViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return BreakingNewsViewModel(app, repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
+//    private fun hasInternetConnection(): Boolean{
+//        var result = false
+//        val connectivityManager = getApplication<NewsApplication>().getSystemService(
+//            Context.CONNECTIVITY_SERVICE
+//        ) as ConnectivityManager
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+//            val actNw =
+//                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+//            result = when {
+//                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+//                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+//                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+//                else -> false
+//            }
+//        } else {
+//            connectivityManager.run {
+//                connectivityManager.activeNetworkInfo?.run {
+//                    result = when (type) {
+//                        ConnectivityManager.TYPE_WIFI -> true
+//                        ConnectivityManager.TYPE_MOBILE -> true
+//                        ConnectivityManager.TYPE_ETHERNET -> true
+//                        else -> false
+//                    }
+//
+//                }
+//            }
+//        }
+//        return result
+//    }
 }
