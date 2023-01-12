@@ -2,6 +2,7 @@ package com.example.newsapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.newsapp.db.ArticleDao
 import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.network.NewsApi
 import com.example.newsapp.util.Constants.Companion.BASE_URL
@@ -31,7 +32,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDao(db: ArticleDatabase) = db.getArticleDao()
+    fun provideDao(db: ArticleDatabase): ArticleDao = db.getArticleDao()
 
     @Provides
     @Singleton
