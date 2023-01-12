@@ -18,6 +18,8 @@ class NewsRepository @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
+                initialLoadSize = 20,
+                prefetchDistance = 1,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { BreakingNewsPagingSource(newsApi) }
