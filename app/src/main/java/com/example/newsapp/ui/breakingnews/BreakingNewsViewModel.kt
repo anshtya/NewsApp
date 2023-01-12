@@ -6,17 +6,16 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.newsapp.models.Article
 import com.example.newsapp.repository.NewsRepository
-import com.example.newsapp.util.Constants.Companion.COUNTRY_CODE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class BreakingNewsViewModel @Inject constructor(
-    private val newsRepository: NewsRepository
+    newsRepository: NewsRepository
 ): ViewModel() {
 
-    val breakingNews: Flow<PagingData<Article>> = newsRepository.getBreakingNews(COUNTRY_CODE).cachedIn(viewModelScope)
+    val breakingNews: Flow<PagingData<Article>> = newsRepository.getBreakingNews().cachedIn(viewModelScope)
 //    val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
 //        .stateIn(
 //            scope = viewModelScope,

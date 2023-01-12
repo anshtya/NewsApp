@@ -14,13 +14,13 @@ class NewsRepository @Inject constructor(
     private val dao: ArticleDao,
     private val newsApi: NewsApi
 ) {
-    fun getBreakingNews(countryCode: String): Flow<PagingData<Article>> {
+    fun getBreakingNews(): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { BreakingNewsPagingSource(newsApi, countryCode) }
+            pagingSourceFactory = { BreakingNewsPagingSource(newsApi) }
         ).flow
     }
 
