@@ -2,7 +2,6 @@ package com.example.newsapp.network
 
 import com.example.newsapp.BuildConfig
 import com.example.newsapp.models.NewsResponse
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -26,6 +25,6 @@ interface NewsApi {
         pageNumber: Int,
         @Query("apiKey")
         apiKey: String = BuildConfig.API_KEY
-    ): Response<NewsResponse>
+    ): NewsResponse
 
 }
