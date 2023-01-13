@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.breakingnews
+package com.example.newsapp.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

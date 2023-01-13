@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.breakingnews
+package com.example.newsapp.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class BreakingNewsViewModel @Inject constructor(
-    newsRepository: NewsRepository
+class NewsViewModel @Inject constructor(
+    private val newsRepository: NewsRepository
 ): ViewModel() {
 
     val breakingNews: Flow<PagingData<Article>> = newsRepository.getBreakingNews().cachedIn(viewModelScope)
