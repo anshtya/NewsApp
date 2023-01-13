@@ -1,9 +1,9 @@
 package com.example.newsapp.network
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.newsapp.models.Article
+import com.example.newsapp.util.Constants.Companion.COUNTRY_CODE
 
 class BreakingNewsPagingSource(
     private val newsApi: NewsApi,
@@ -19,7 +19,7 @@ class BreakingNewsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
         val position = params.key ?: 1
         return try {
-            val response = newsApi.getBreakingNews("in", position)
+            val response = newsApi.getBreakingNews(COUNTRY_CODE, position)
             val news = response.articles
             LoadResult.Page(
                 data = response.articles,
