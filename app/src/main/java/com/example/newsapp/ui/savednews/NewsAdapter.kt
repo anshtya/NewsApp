@@ -1,20 +1,18 @@
-package com.example.newsapp.adapters
+package com.example.newsapp.ui.savednews
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.newsapp.R
-import com.example.newsapp.models.Article
-import kotlinx.android.synthetic.main.item_article_preview.view.*
+import com.example.newsapp.databinding.ItemArticlePreviewBinding
+import com.example.newsapp.data.network.model.Article
 
 class NewsAdapter(private val onClick: (Article) -> Unit):
     ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCallback) {
 
-    inner class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ArticleViewHolder(private val binding: ItemArticlePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private var currentArticle: Article? = null
 
@@ -28,8 +26,8 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
 
         fun bind(article: Article){
             currentArticle = article
-            itemView.apply {
-                Glide.with(this).load(article.urlToImage).into(ivArticleImage)
+            binding.apply {
+                Glide.with(itemView.context).load(article.urlToImage).into(ivArticleImage)
                 tvTitle.text = article.title
                 tvSource.text = article.source?.name
                 tvDescription.text = article.description
@@ -53,18 +51,15 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        return ArticleViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_article_preview,
-                parent,
-                false
-            )
-        )
+        val binding =  ItemArticlePreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ArticleViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = getItem(position)
-        holder.bind(article)
+        if (article != null) {
+            holder.bind(article)
+        }
     }
 
 }

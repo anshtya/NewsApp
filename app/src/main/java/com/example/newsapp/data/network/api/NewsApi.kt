@@ -1,12 +1,11 @@
-package com.example.newsapp.api
+package com.example.newsapp.data.network.api
 
 import com.example.newsapp.BuildConfig
-import com.example.newsapp.models.NewsResponse
-import retrofit2.Response
+import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface NewsAPI {
+interface NewsApi {
 
     @GET("v2/top-headlines")
     suspend fun getBreakingNews(
@@ -16,7 +15,7 @@ interface NewsAPI {
         pageNumber: Int,
         @Query("apiKey")
         apiKey: String = BuildConfig.API_KEY
-    ): Response<NewsResponse>
+    ): NewsResponse
 
     @GET("v2/everything")
     suspend fun searchForNews(
@@ -24,8 +23,10 @@ interface NewsAPI {
         searchQuery: String,
         @Query("page")
         pageNumber: Int,
+        @Query("pageSize")
+        pageSize: Int = QUERY_PAGE_SIZE,
         @Query("apiKey")
         apiKey: String = BuildConfig.API_KEY
-    ): Response<NewsResponse>
+    ): NewsResponse
 
 }
