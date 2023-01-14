@@ -5,13 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
+import com.example.newsapp.ui.NewsLoadStateAdapter
+import com.example.newsapp.ui.NewsViewModel
+import com.example.newsapp.ui.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchNewsFragment : Fragment() {
 
+    private val viewModel: NewsViewModel by activityViewModels()
     private lateinit var binding: FragmentSearchNewsBinding
+    private lateinit var pagingNewsAdapter: PagingNewsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,13 +28,11 @@ class SearchNewsFragment : Fragment() {
         return binding.root
     }
 
-//    private val viewModel: NewsViewModel by activityViewModels()
-//    private lateinit var newsAdapter: NewsAdapter
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        setupRecyclerView()
-//
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+
 //        var job: Job? = null
 //        etSearch.addTextChangedListener { editable ->
 //            job?.cancel()
@@ -69,7 +74,7 @@ class SearchNewsFragment : Fragment() {
 //                }
 //            }
 //        }
-//    }
+    }
 //
 //    private fun hideProgressBar(){
 //        paginationProgressBar.visibility = View.INVISIBLE
@@ -114,16 +119,14 @@ class SearchNewsFragment : Fragment() {
 //        }
 //    }
 //
-//    private fun setupRecyclerView(){
-//        newsAdapter = NewsAdapter { article ->
-//            onClick(article)
-//        }
-//        rvSearchNews.apply {
-//            adapter = newsAdapter
-//            layoutManager = LinearLayoutManager(activity)
+    private fun setupRecyclerView(){
+        pagingNewsAdapter = PagingNewsAdapter()
+        binding.rvSearchNews.apply {
+            adapter = pagingNewsAdapter.withLoadStateFooter(NewsLoadStateAdapter())
+            layoutManager = LinearLayoutManager(activity)
 //            addOnScrollListener(this@SearchNewsFragment.scrollListener)
-//        }
-//    }
+        }
+    }
 //
 //    private fun onClick(article: Article){
 //        val bundle = Bundle().apply {
