@@ -1,9 +1,9 @@
-package com.example.newsapp.db
+package com.example.newsapp.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.newsapp.models.Article
+import com.example.newsapp.data.network.model.Article
 
 @Database(
     entities = [Article::class],

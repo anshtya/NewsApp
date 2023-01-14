@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.databinding.ItemArticlePreviewBinding
-import com.example.newsapp.models.Article
+import com.example.newsapp.data.network.model.Article
 
 class NewsAdapter(private val onClick: (Article) -> Unit):
     ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCallback) {

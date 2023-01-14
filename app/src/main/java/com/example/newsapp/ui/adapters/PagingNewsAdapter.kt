@@ -1,4 +1,4 @@
-package com.example.newsapp.ui
+package com.example.newsapp.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.databinding.ItemArticlePreviewBinding
-import com.example.newsapp.models.Article
+import com.example.newsapp.data.network.model.Article
 
 class PagingNewsAdapter(private val onClick: (Article) -> Unit):
     PagingDataAdapter<Article, PagingNewsAdapter.ArticleViewHolder>(DifferCallback) {

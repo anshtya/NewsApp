@@ -1,7 +1,6 @@
-package com.example.newsapp.network
+package com.example.newsapp.data.network.api
 
 import com.example.newsapp.BuildConfig
-import com.example.newsapp.models.NewsResponse
 import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import retrofit2.http.GET
 import retrofit2.http.Query

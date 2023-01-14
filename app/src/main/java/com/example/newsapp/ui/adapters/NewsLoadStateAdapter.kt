@@ -1,4 +1,4 @@
-package com.example.newsapp.ui
+package com.example.newsapp.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.example.newsapp.databinding.LoadStateFooterBinding
 
 class NewsLoadStateAdapter: LoadStateAdapter<NewsLoadStateAdapter.LoaderViewHolder>() {
 
-    class LoaderViewHolder(private val binding: LoadStateFooterBinding): RecyclerView.ViewHolder(binding.root){
+    class LoaderViewHolder(binding: LoadStateFooterBinding): RecyclerView.ViewHolder(binding.root){
 
         private val progressBar = binding.progressBar
 

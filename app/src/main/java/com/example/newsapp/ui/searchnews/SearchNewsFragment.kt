@@ -14,10 +14,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
-import com.example.newsapp.models.Article
-import com.example.newsapp.ui.NewsLoadStateAdapter
-import com.example.newsapp.ui.NewsViewModel
-import com.example.newsapp.ui.PagingNewsAdapter
+import com.example.newsapp.data.network.model.Article
+import com.example.newsapp.ui.adapters.NewsLoadStateAdapter
+import com.example.newsapp.viewmodel.NewsViewModel
+import com.example.newsapp.ui.adapters.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

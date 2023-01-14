@@ -2,9 +2,9 @@ package com.example.newsapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.newsapp.db.ArticleDao
-import com.example.newsapp.db.ArticleDatabase
-import com.example.newsapp.network.NewsApi
+import com.example.newsapp.data.local.ArticleDao
+import com.example.newsapp.data.local.ArticleDatabase
+import com.example.newsapp.data.network.api.NewsApi
 import com.example.newsapp.util.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -51,7 +51,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApi(retrofit: Retrofit): NewsApi{
+    fun provideApi(retrofit: Retrofit): NewsApi {
         return retrofit.create(NewsApi::class.java)
     }
 }

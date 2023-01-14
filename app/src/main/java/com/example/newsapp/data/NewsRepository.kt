@@ -1,13 +1,13 @@
-package com.example.newsapp.repository
+package com.example.newsapp.data
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.newsapp.db.ArticleDao
-import com.example.newsapp.models.Article
-import com.example.newsapp.network.BreakingNewsPagingSource
-import com.example.newsapp.network.NewsApi
-import com.example.newsapp.network.SearchNewsPagingSource
+import com.example.newsapp.data.local.ArticleDao
+import com.example.newsapp.data.network.model.Article
+import com.example.newsapp.data.network.BreakingNewsPagingSource
+import com.example.newsapp.data.network.api.NewsApi
+import com.example.newsapp.data.network.SearchNewsPagingSource
 import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

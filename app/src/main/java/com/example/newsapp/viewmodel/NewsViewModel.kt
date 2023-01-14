@@ -1,10 +1,10 @@
-package com.example.newsapp.ui
+package com.example.newsapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.example.newsapp.models.Article
-import com.example.newsapp.repository.NewsRepository
+import com.example.newsapp.data.network.model.Article
+import com.example.newsapp.data.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

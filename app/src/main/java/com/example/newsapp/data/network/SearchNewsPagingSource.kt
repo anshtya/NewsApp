@@ -1,8 +1,9 @@
-package com.example.newsapp.network
+package com.example.newsapp.data.network
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.newsapp.models.Article
+import com.example.newsapp.data.network.api.NewsApi
+import com.example.newsapp.data.network.model.Article
 
 class SearchNewsPagingSource(
     private val newsApi: NewsApi,
