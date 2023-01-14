@@ -4,14 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
 import com.example.newsapp.ui.NewsLoadStateAdapter
 import com.example.newsapp.ui.NewsViewModel
 import com.example.newsapp.ui.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchNewsFragment : Fragment() {
@@ -33,16 +39,24 @@ class SearchNewsFragment : Fragment() {
 
         setupRecyclerView()
 
-//        var job: Job? = null
-//        etSearch.addTextChangedListener { editable ->
-//            job?.cancel()
-//            job = MainScope().launch {
-//                delay(SEARCH_NEWS_TIME_DELAY)
-//                if(editable.toString().isNotEmpty()){
-//                    viewModel.searchNews(editable.toString())
-//                }
-//            }
-//        }
+        binding.svSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.STARTED){
+                            viewModel.getSearchNews(query).collectLatest{ articles ->
+                                pagingNewsAdapter.submitData(articles)
+                            }
+                        }
+                    }
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
 //
 //        viewLifecycleOwner.lifecycleScope.launch {
 //            repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -75,50 +89,6 @@ class SearchNewsFragment : Fragment() {
 //            }
 //        }
     }
-//
-//    private fun hideProgressBar(){
-//        paginationProgressBar.visibility = View.INVISIBLE
-//        isLoading = false
-//    }
-//
-//    private fun showProgressBar(){
-//        paginationProgressBar.visibility = View.VISIBLE
-//        isLoading = true
-//    }
-//
-//    var isLoading = false
-//    var isLastPage = false
-//    var isScrolling = false
-//
-//    private val scrollListener = object: RecyclerView.OnScrollListener() {
-//        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//            super.onScrolled(recyclerView, dx, dy)
-//
-//            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-//            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-//            val visibleItemCount = layoutManager.childCount
-//            val totalItemCount = layoutManager.itemCount
-//
-//            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
-//            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
-//            val isNotAtBeginning = firstVisibleItemPosition >= 0
-//            val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
-//            val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
-//                    isTotalMoreThanVisible && isScrolling
-//            if (shouldPaginate) {
-//                viewModel.searchNews(etSearch.text.toString())
-//                isScrolling = false
-//            }
-//        }
-//
-//        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//            super.onScrollStateChanged(recyclerView, newState)
-//            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-//                isScrolling = true
-//            }
-//        }
-//    }
-//
     private fun setupRecyclerView(){
         pagingNewsAdapter = PagingNewsAdapter()
         binding.rvSearchNews.apply {

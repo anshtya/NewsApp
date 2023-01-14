@@ -16,6 +16,8 @@ class NewsViewModel @Inject constructor(
 ): ViewModel() {
 
     val breakingNews: Flow<PagingData<Article>> = newsRepository.getBreakingNews().cachedIn(viewModelScope)
+    fun getSearchNews(query: String) = newsRepository.getSearchNews(query).cachedIn(viewModelScope)
+
 //    val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
 //        .stateIn(
 //            scope = viewModelScope,

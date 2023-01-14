@@ -2,6 +2,7 @@ package com.example.newsapp.network
 
 import com.example.newsapp.BuildConfig
 import com.example.newsapp.models.NewsResponse
+import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -23,6 +24,8 @@ interface NewsApi {
         searchQuery: String,
         @Query("page")
         pageNumber: Int,
+        @Query("pageSize")
+        pageSize: Int = QUERY_PAGE_SIZE,
         @Query("apiKey")
         apiKey: String = BuildConfig.API_KEY
     ): NewsResponse
