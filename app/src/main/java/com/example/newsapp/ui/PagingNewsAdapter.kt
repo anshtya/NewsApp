@@ -9,20 +9,20 @@ import com.bumptech.glide.Glide
 import com.example.newsapp.databinding.ItemArticlePreviewBinding
 import com.example.newsapp.models.Article
 
-class PagingNewsAdapter:
+class PagingNewsAdapter(private val onClick: (Article) -> Unit):
     PagingDataAdapter<Article, PagingNewsAdapter.ArticleViewHolder>(DifferCallback) {
 
     inner class ArticleViewHolder(private val binding: ItemArticlePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private var currentArticle: Article? = null
 
-//        init {
-//            itemView.setOnClickListener {
-//                currentArticle?.let{ article ->
-//                    onClick(article)
-//                }
-//            }
-//        }
+        init {
+            itemView.setOnClickListener {
+                currentArticle?.let{ article ->
+                    onClick(article)
+                }
+            }
+        }
 
         fun bind(article: Article){
             currentArticle = article

@@ -10,8 +10,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
+import com.example.newsapp.models.Article
 import com.example.newsapp.ui.NewsLoadStateAdapter
 import com.example.newsapp.ui.NewsViewModel
 import com.example.newsapp.ui.PagingNewsAdapter
@@ -57,54 +60,25 @@ class SearchNewsFragment : Fragment() {
                 return true
             }
         })
-//
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.searchNews.collect { response ->
-//                    when (response) {
-//                        is Resource.Success -> {
-//                            hideProgressBar()
-//                            response.data?.let{ newsResponse ->
-//                                newsAdapter.submitList(newsResponse.articles.toList())
-//                                val totalPages = newsResponse.totalResults/ Constants.QUERY_PAGE_SIZE + 2
-//                                isLastPage = viewModel.searchNewsPage == totalPages
-//                                if(isLastPage){
-//                                    rvSearchNews.setPadding(0,0,0,0)
-//                                }
-//                            }
-//                        }
-//
-//                        is Resource.Error -> {
-//                            hideProgressBar()
-//                            response.message?.let{ message ->
-//                                Toast.makeText(context,"An error occurred: $message", Toast.LENGTH_LONG).show()
-//                            }
-//                        }
-//
-//                        is Resource.Loading -> {
-//                            showProgressBar()
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
+
     private fun setupRecyclerView(){
-        pagingNewsAdapter = PagingNewsAdapter()
+        pagingNewsAdapter = PagingNewsAdapter{ article ->
+            onClick(article)
+        }
         binding.rvSearchNews.apply {
             adapter = pagingNewsAdapter.withLoadStateFooter(NewsLoadStateAdapter())
             layoutManager = LinearLayoutManager(activity)
-//            addOnScrollListener(this@SearchNewsFragment.scrollListener)
         }
     }
-//
-//    private fun onClick(article: Article){
-//        val bundle = Bundle().apply {
-//            putSerializable("article", article)
-//        }
-//        findNavController().navigate(
-//            R.id.action_searchNewsFragment_to_articleFragment,
-//            bundle
-//        )
-//    }
+
+    private fun onClick(article: Article){
+        val bundle = Bundle().apply {
+            putSerializable("article", article)
+        }
+        findNavController().navigate(
+            R.id.action_searchNewsFragment_to_articleFragment,
+            bundle
+        )
+    }
 }
