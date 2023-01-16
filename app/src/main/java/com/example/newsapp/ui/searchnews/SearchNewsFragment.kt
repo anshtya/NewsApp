@@ -52,6 +52,7 @@ class SearchNewsFragment : Fragment() {
                     binding.rvSearchNews.scrollToPosition(0)
                     viewModel.getSearchNews(query)
                 }
+                binding.svSearch.clearFocus()
                 return true
             }
 
@@ -74,7 +75,7 @@ class SearchNewsFragment : Fragment() {
                     val errorOccurred = loadState.source.refresh is LoadState.Error
                     val newsLoading = loadState.source.refresh is LoadState.Loading
                     binding.apply {
-                        rvSearchNews.isVisible = !newsLoading
+                        rvSearchNews.isVisible = !newsLoading && !errorOccurred
                         progressBar.isVisible = newsLoading
                         btRetry.isVisible = errorOccurred
                         tvError.isVisible = errorOccurred
