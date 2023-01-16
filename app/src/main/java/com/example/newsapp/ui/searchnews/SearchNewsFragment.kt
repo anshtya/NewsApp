@@ -45,13 +45,7 @@ class SearchNewsFragment : Fragment() {
         binding.svSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        repeatOnLifecycle(Lifecycle.State.STARTED){
-                            viewModel.getSearchNews(query).collectLatest{ articles ->
-                                pagingNewsAdapter.submitData(articles)
-                            }
-                        }
-                    }
+                    viewModel.getSearchNews(query)
                 }
                 return true
             }
@@ -60,6 +54,14 @@ class SearchNewsFragment : Fragment() {
                 return true
             }
         })
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.searchNews.collectLatest{ articles ->
+                    pagingNewsAdapter.submitData(articles)
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView(){

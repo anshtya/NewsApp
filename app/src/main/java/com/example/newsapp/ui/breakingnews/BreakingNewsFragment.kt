@@ -18,7 +18,6 @@ import com.example.newsapp.viewmodel.NewsViewModel
 import com.example.newsapp.ui.adapters.NewsLoadStateAdapter
 import com.example.newsapp.ui.adapters.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -42,8 +41,8 @@ class BreakingNewsFragment : Fragment() {
         setupRecyclerView()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getBreakingNews().collectLatest { articles ->
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.breakingNews.collect{ articles ->
                     pagingNewsAdapter.submitData(articles)
                 }
             }

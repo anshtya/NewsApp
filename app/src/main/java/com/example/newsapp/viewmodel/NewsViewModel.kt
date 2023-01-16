@@ -2,6 +2,7 @@ package com.example.newsapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.data.NewsRepository
@@ -15,25 +16,13 @@ class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ): ViewModel() {
 
-    init{
-        getBreakingNews()
-    }
+    private val _breakingNews = MutableStateFlow<PagingData<Article>>(PagingData.empty())
+    val breakingNews: StateFlow<PagingData<Article>>
+        get() = _breakingNews
 
-    fun getBreakingNews() = newsRepository.getBreakingNews().cachedIn(viewModelScope)
-
-    fun getSearchNews(query: String) = newsRepository.getSearchNews(query).cachedIn(viewModelScope)
-
-    fun deleteArticle(article: Article) {
-        viewModelScope.launch {
-            newsRepository.delete(article)
-        }
-    }
-
-    fun saveArticle(article: Article){
-        viewModelScope.launch {
-            newsRepository.insert(article)
-        }
-    }
+    private val _searchNews = MutableStateFlow<PagingData<Article>>(PagingData.empty())
+    val searchNews: StateFlow<PagingData<Article>>
+        get() = _searchNews
 
     val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
         .stateIn(
@@ -41,4 +30,36 @@ class NewsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = listOf()
         )
+
+    init {
+        getBreakingNews()
+    }
+
+    private fun getBreakingNews() = viewModelScope.launch {
+        newsRepository.getBreakingNews()
+            .cachedIn(viewModelScope)
+            .collectLatest { articles ->
+                _breakingNews.value = articles
+            }
+    }
+
+    fun getSearchNews(query: String) = viewModelScope.launch {
+        newsRepository.getSearchNews(query)
+            .cachedIn(viewModelScope)
+            .collectLatest { articles ->
+                _searchNews.value = articles
+            }
+    }
+
+    fun deleteArticle(article: Article) {
+        viewModelScope.launch {
+            newsRepository.delete(article)
+        }
+    }
+
+    fun saveArticle(article: Article) {
+        viewModelScope.launch {
+            newsRepository.insert(article)
+        }
+    }
 }
