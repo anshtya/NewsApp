@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
@@ -42,17 +44,15 @@ class SearchNewsFragment : Fragment() {
 
         setupRecyclerView()
 
+        binding.btRetry.setOnClickListener { pagingNewsAdapter.retry() }
+
         binding.svSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        repeatOnLifecycle(Lifecycle.State.STARTED){
-                            viewModel.getSearchNews(query).collectLatest{ articles ->
-                                pagingNewsAdapter.submitData(articles)
-                            }
-                        }
-                    }
+                    binding.rvSearchNews.scrollToPosition(0)
+                    viewModel.getSearchNews(query)
                 }
+                binding.svSearch.clearFocus()
                 return true
             }
 
@@ -60,6 +60,29 @@ class SearchNewsFragment : Fragment() {
                 return true
             }
         })
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.searchNews.collectLatest{ articles ->
+                    pagingNewsAdapter.submitData(articles)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
+                pagingNewsAdapter.loadStateFlow.collectLatest { loadState ->
+                    val errorOccurred = loadState.source.refresh is LoadState.Error
+                    val newsLoading = loadState.source.refresh is LoadState.Loading
+                    binding.apply {
+                        rvSearchNews.isVisible = !newsLoading && !errorOccurred
+                        progressBar.isVisible = newsLoading
+                        btRetry.isVisible = errorOccurred
+                        tvError.isVisible = errorOccurred
+                    }
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView(){
