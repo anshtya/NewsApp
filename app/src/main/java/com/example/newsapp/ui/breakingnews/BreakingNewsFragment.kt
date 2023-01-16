@@ -42,7 +42,7 @@ class BreakingNewsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        
+
         binding.btRetry.setOnClickListener { pagingNewsAdapter.retry() }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -52,7 +52,7 @@ class BreakingNewsFragment : Fragment() {
                 }
             }
         }
-        
+
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycleScope.launch {
                 pagingNewsAdapter.loadStateFlow.collectLatest { loadState ->

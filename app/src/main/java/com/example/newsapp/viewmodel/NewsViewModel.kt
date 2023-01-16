@@ -57,7 +57,7 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    fun saveArticle(article: Article){
+    fun saveArticle(article: Article) {
         viewModelScope.launch {
             newsRepository.insert(article)
         }
