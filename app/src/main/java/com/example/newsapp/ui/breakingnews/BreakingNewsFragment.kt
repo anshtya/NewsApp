@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentBreakingNewsBinding
@@ -18,6 +20,7 @@ import com.example.newsapp.viewmodel.NewsViewModel
 import com.example.newsapp.ui.adapters.NewsLoadStateAdapter
 import com.example.newsapp.ui.adapters.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -40,10 +43,25 @@ class BreakingNewsFragment : Fragment() {
 
         setupRecyclerView()
 
+        binding.btRetry.setOnClickListener { pagingNewsAdapter.retry() }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 viewModel.breakingNews.collect{ articles ->
                     pagingNewsAdapter.submitData(articles)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
+                pagingNewsAdapter.loadStateFlow.collectLatest { loadState ->
+                    val errorOccurred = loadState.source.refresh is LoadState.Error
+                    binding.apply {
+                        progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                        btRetry.isVisible = errorOccurred
+                        tvError.isVisible = errorOccurred
+                    }
                 }
             }
         }
