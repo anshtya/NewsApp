@@ -18,3 +18,7 @@ This project uses NewsAPI API key. To get yours visit [NewsAPI](https://newsapi.
 API_KEY = your_api_key
 ```
 and rebuild the project.
+
+## Demo
+https://user-images.githubusercontent.com/95761927/212798563-8629bb03-f0cd-4300-8d7e-10f7aea424b8.mp4
+
