@@ -42,7 +42,7 @@ class NewsRepository @Inject constructor(
 
     suspend fun insert(article: Article) = dao.insert(article)
 
-    fun getSavedNews() = dao.getAllArticles()
+    val savedNews = dao.getAllArticles()
 
     suspend fun delete(article: Article) {
         dao.deleteArticle(article)

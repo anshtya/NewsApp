@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -13,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
@@ -49,7 +49,6 @@ class SearchNewsFragment : Fragment() {
         binding.svSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    binding.rvSearchNews.scrollToPosition(0)
                     viewModel.getSearchNews(query)
                 }
                 binding.svSearch.clearFocus()
@@ -63,22 +62,41 @@ class SearchNewsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.searchNews.collectLatest{ articles ->
-                    pagingNewsAdapter.submitData(articles)
+                viewModel.searchNews.collectLatest { articles ->
+                    pagingNewsAdapter.apply {
+                        submitData(PagingData.empty())
+                        submitData(articles)
+                    }
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycleScope.launch {
-                pagingNewsAdapter.loadStateFlow.collectLatest { loadState ->
-                    val errorOccurred = loadState.source.refresh is LoadState.Error
-                    val newsLoading = loadState.source.refresh is LoadState.Loading
-                    binding.apply {
-                        rvSearchNews.isVisible = !newsLoading && !errorOccurred
-                        progressBar.isVisible = newsLoading
-                        btRetry.isVisible = errorOccurred
-                        tvError.isVisible = errorOccurred
+                pagingNewsAdapter.loadStateFlow.collectLatest { newsLoadState ->
+                    when (newsLoadState.source.refresh) {
+                        is LoadState.Error -> {
+                            binding.apply {
+                                progressBar.visibility = View.INVISIBLE
+                                btRetry.visibility = View.VISIBLE
+                                tvError.visibility = View.VISIBLE
+                                rvSearchNews.visibility = View.INVISIBLE
+                            }
+                        }
+                        is LoadState.Loading -> {
+                            binding.apply {
+                                rvSearchNews.visibility = View.INVISIBLE
+                                progressBar.visibility = View.VISIBLE
+                            }
+                        }
+                        is LoadState.NotLoading -> {
+                            binding.apply {
+                                progressBar.visibility = View.INVISIBLE
+                                btRetry.visibility = View.INVISIBLE
+                                tvError.visibility = View.INVISIBLE
+                                rvSearchNews.visibility = View.VISIBLE
+                            }
+                        }
                     }
                 }
             }

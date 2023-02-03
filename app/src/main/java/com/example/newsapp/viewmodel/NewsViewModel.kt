@@ -14,17 +14,15 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _breakingNews = MutableStateFlow<PagingData<Article>>(PagingData.empty())
-    val breakingNews: StateFlow<PagingData<Article>>
-        get() = _breakingNews
+    val breakingNews = _breakingNews.asStateFlow()
 
     private val _searchNews = MutableStateFlow<PagingData<Article>>(PagingData.empty())
-    val searchNews: StateFlow<PagingData<Article>>
-        get() = _searchNews
+    val searchNews = _searchNews.asStateFlow()
 
-    val savedNews: StateFlow<List<Article>> = newsRepository.getSavedNews()
+    val savedNews: StateFlow<List<Article>> = newsRepository.savedNews
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -38,7 +36,7 @@ class NewsViewModel @Inject constructor(
     private fun getBreakingNews() = viewModelScope.launch {
         newsRepository.getBreakingNews()
             .cachedIn(viewModelScope)
-            .collectLatest { articles ->
+            .collect { articles ->
                 _breakingNews.value = articles
             }
     }
@@ -46,7 +44,7 @@ class NewsViewModel @Inject constructor(
     fun getSearchNews(query: String) = viewModelScope.launch {
         newsRepository.getSearchNews(query)
             .cachedIn(viewModelScope)
-            .collectLatest { articles ->
+            .collect { articles ->
                 _searchNews.value = articles
             }
     }

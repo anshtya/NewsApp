@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -20,7 +19,6 @@ import com.example.newsapp.viewmodel.NewsViewModel
 import com.example.newsapp.ui.adapters.NewsLoadStateAdapter
 import com.example.newsapp.ui.adapters.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -46,8 +44,8 @@ class BreakingNewsFragment : Fragment() {
         binding.btRetry.setOnClickListener { pagingNewsAdapter.retry() }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.breakingNews.collect{ articles ->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.breakingNews.collect { articles ->
                     pagingNewsAdapter.submitData(articles)
                 }
             }
@@ -55,20 +53,33 @@ class BreakingNewsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycleScope.launch {
-                pagingNewsAdapter.loadStateFlow.collectLatest { loadState ->
-                    val errorOccurred = loadState.source.refresh is LoadState.Error
-                    binding.apply {
-                        progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-                        btRetry.isVisible = errorOccurred
-                        tvError.isVisible = errorOccurred
+                pagingNewsAdapter.loadStateFlow.collect { newsLoadState ->
+                    when (newsLoadState.source.refresh) {
+                        is LoadState.Error -> {
+                            binding.apply {
+                                progressBar.visibility = View.INVISIBLE
+                                btRetry.visibility = View.VISIBLE
+                                tvError.visibility = View.VISIBLE
+                            }
+                        }
+                        is LoadState.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+                        is LoadState.NotLoading -> {
+                            binding.apply {
+                                progressBar.visibility = View.INVISIBLE
+                                btRetry.visibility = View.INVISIBLE
+                                tvError.visibility = View.INVISIBLE
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun setupRecyclerView(){
-        pagingNewsAdapter = PagingNewsAdapter{ article ->
+    private fun setupRecyclerView() {
+        pagingNewsAdapter = PagingNewsAdapter { article ->
             onClick(article)
         }
         binding.rvBreakingNews.apply {
@@ -77,7 +88,7 @@ class BreakingNewsFragment : Fragment() {
         }
     }
 
-    private fun onClick(article: Article){
+    private fun onClick(article: Article) {
         val bundle = Bundle().apply {
             putSerializable("article", article)
         }
