@@ -1,7 +1,7 @@
 
 # NewsApp
 
-News app created using Kotlin. This app uses NewsAPI for displaying and searching news and saving news articles for offline reading.
+News app created using Kotlin. This app uses NewsAPI for displaying and searching news and bookmark news articles.
 
 
 ## Installation
