@@ -21,6 +21,9 @@ import com.example.newsapp.ui.adapters.NewsLoadStateAdapter
 import com.example.newsapp.viewmodel.NewsViewModel
 import com.example.newsapp.ui.adapters.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -46,7 +49,8 @@ class SearchNewsFragment : Fragment() {
 
         binding.btRetry.setOnClickListener { pagingNewsAdapter.retry() }
 
-        binding.svSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+        var job: Job? = null
+        binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     viewModel.getSearchNews(query)
@@ -56,12 +60,26 @@ class SearchNewsFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                job?.cancel()
+                job = MainScope().launch {
+                    delay(500L)
+                    if (newText?.isNotEmpty() == true) {
+                        viewModel.updateSearchQuery(newText)
+                    }
+                }
                 return true
             }
         })
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.searchNewsQuery.collectLatest {
+                    binding.svSearch.setQuery(it, false)
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.searchNews.collectLatest { articles ->
                     pagingNewsAdapter.apply {
                         submitData(PagingData.empty())
@@ -103,8 +121,8 @@ class SearchNewsFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView(){
-        pagingNewsAdapter = PagingNewsAdapter{ article ->
+    private fun setupRecyclerView() {
+        pagingNewsAdapter = PagingNewsAdapter { article ->
             onClick(article)
         }
         binding.rvSearchNews.apply {
@@ -113,7 +131,7 @@ class SearchNewsFragment : Fragment() {
         }
     }
 
-    private fun onClick(article: Article){
+    private fun onClick(article: Article) {
         val bundle = Bundle().apply {
             putSerializable("article", article)
         }

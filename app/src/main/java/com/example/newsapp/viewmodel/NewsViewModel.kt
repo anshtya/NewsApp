@@ -22,6 +22,8 @@ class NewsViewModel @Inject constructor(
     private val _searchNews = MutableStateFlow<PagingData<Article>>(PagingData.empty())
     val searchNews = _searchNews.asStateFlow()
 
+    val searchNewsQuery = MutableStateFlow("")
+
     val savedNews: StateFlow<List<Article>> = newsRepository.savedNews
         .stateIn(
             scope = viewModelScope,
@@ -39,6 +41,10 @@ class NewsViewModel @Inject constructor(
             .collect { articles ->
                 _breakingNews.value = articles
             }
+    }
+
+    fun updateSearchQuery(newQuery: String) {
+        searchNewsQuery.value = newQuery
     }
 
     fun getSearchNews(query: String) = viewModelScope.launch {
