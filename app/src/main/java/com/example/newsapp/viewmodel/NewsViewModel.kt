@@ -16,13 +16,12 @@ class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
 
-    private val _breakingNews = MutableStateFlow<PagingData<Article>>(PagingData.empty())
-    val breakingNews = _breakingNews.asStateFlow()
-
     private val _searchNews = MutableStateFlow<PagingData<Article>>(PagingData.empty())
     val searchNews = _searchNews.asStateFlow()
 
     val searchNewsQuery = MutableStateFlow("")
+
+    val breakingNews = newsRepository.getBreakingNews().cachedIn(viewModelScope)
 
     val savedNews: StateFlow<List<Article>> = newsRepository.savedNews
         .stateIn(
@@ -30,18 +29,6 @@ class NewsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = listOf()
         )
-
-    init {
-        getBreakingNews()
-    }
-
-    private fun getBreakingNews() = viewModelScope.launch {
-        newsRepository.getBreakingNews()
-            .cachedIn(viewModelScope)
-            .collect { articles ->
-                _breakingNews.value = articles
-            }
-    }
 
     fun updateSearchQuery(newQuery: String) {
         searchNewsQuery.value = newQuery

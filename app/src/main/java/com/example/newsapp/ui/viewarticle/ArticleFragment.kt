@@ -43,7 +43,7 @@ class ArticleFragment : Fragment() {
 
         binding.fab.setOnClickListener {
             viewModel.saveArticle(article)
-            Snackbar.make(view, "Article saved successfully", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view, "Article bookmarked successfully", Snackbar.LENGTH_SHORT).show()
         }
     }
 }

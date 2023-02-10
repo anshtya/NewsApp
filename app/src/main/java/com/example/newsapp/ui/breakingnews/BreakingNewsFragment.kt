@@ -63,7 +63,11 @@ class BreakingNewsFragment : Fragment() {
                             }
                         }
                         is LoadState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
+                            binding.apply {
+                                progressBar.visibility = View.VISIBLE
+                                btRetry.visibility = View.INVISIBLE
+                                tvError.visibility = View.INVISIBLE
+                            }
                         }
                         is LoadState.NotLoading -> {
                             binding.apply {

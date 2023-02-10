@@ -104,6 +104,8 @@ class SearchNewsFragment : Fragment() {
                         is LoadState.Loading -> {
                             binding.apply {
                                 rvSearchNews.visibility = View.INVISIBLE
+                                tvError.visibility = View.INVISIBLE
+                                btRetry.visibility = View.INVISIBLE
                                 progressBar.visibility = View.VISIBLE
                             }
                         }
