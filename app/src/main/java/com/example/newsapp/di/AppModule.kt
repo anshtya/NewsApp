@@ -2,8 +2,9 @@ package com.example.newsapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.newsapp.data.local.ArticleDao
-import com.example.newsapp.data.local.ArticleDatabase
+import com.example.newsapp.data.article.ArticleDao
+import com.example.newsapp.data.article.ArticleDatabase
+import com.example.newsapp.data.network.RemoteKeyDao
 import com.example.newsapp.data.network.api.NewsApi
 import com.example.newsapp.util.Constants.Companion.BASE_URL
 import dagger.Module
@@ -32,7 +33,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDao(db: ArticleDatabase): ArticleDao = db.getArticleDao()
+    fun provideArticleDao(db: ArticleDatabase): ArticleDao = db.getArticleDao()
+
+//    @Provides
+//    @Singleton
+//    fun provideRemoteKeyDao(db: ArticleDatabase): RemoteKeyDao = db.getRemoteKeyDao()
 
     @Provides
     @Singleton

@@ -1,7 +1,6 @@
-package com.example.newsapp.data.local
+package com.example.newsapp.data.article
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -17,6 +16,6 @@ interface ArticleDao {
     @Query("SELECT * FROM articles")
     fun getAllArticles(): Flow<List<Article>>
 
-    @Delete
-    suspend fun deleteArticle(article: Article)
+    @Query("DELETE FROM articles WHERE url = :articleUrl")
+    suspend fun deleteArticleByUrl(articleUrl: String)
 }

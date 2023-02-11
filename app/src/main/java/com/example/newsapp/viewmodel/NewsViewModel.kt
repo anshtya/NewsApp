@@ -42,9 +42,9 @@ class NewsViewModel @Inject constructor(
             }
     }
 
-    fun deleteArticle(article: Article) {
+    fun deleteArticle(articleUrl: String) {
         viewModelScope.launch {
-            newsRepository.delete(article)
+            newsRepository.delete(articleUrl)
         }
     }
 

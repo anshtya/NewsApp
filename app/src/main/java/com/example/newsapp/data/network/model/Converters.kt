@@ -1,4 +1,4 @@
-package com.example.newsapp.data.local
+package com.example.newsapp.data.network.model
 
 import androidx.room.TypeConverter
 import com.example.newsapp.data.network.model.Source

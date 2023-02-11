@@ -50,7 +50,7 @@ class PagingNewsAdapter(private val onClick: (Article) -> Unit) :
     companion object {
         private val DifferCallback = object : DiffUtil.ItemCallback<Article>() {
             override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.url == newItem.url
             }
 
             override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {

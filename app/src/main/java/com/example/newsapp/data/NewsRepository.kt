@@ -3,7 +3,7 @@ package com.example.newsapp.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.newsapp.data.local.ArticleDao
+import com.example.newsapp.data.article.ArticleDao
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.data.network.BreakingNewsPagingSource
 import com.example.newsapp.data.network.api.NewsApi
@@ -21,8 +21,7 @@ class NewsRepository @Inject constructor(
             config = PagingConfig(
                 pageSize = QUERY_PAGE_SIZE,
                 initialLoadSize = QUERY_PAGE_SIZE,
-                prefetchDistance = 1,
-                enablePlaceholders = false
+                prefetchDistance = 1
             ),
             pagingSourceFactory = { BreakingNewsPagingSource(newsApi) }
         ).flow
@@ -33,8 +32,7 @@ class NewsRepository @Inject constructor(
             config = PagingConfig(
                 pageSize = QUERY_PAGE_SIZE,
                 initialLoadSize = QUERY_PAGE_SIZE,
-                prefetchDistance = 1,
-                enablePlaceholders = false
+                prefetchDistance = 1
             ),
             pagingSourceFactory = { SearchNewsPagingSource(newsApi, query) }
         ).flow
@@ -44,7 +42,5 @@ class NewsRepository @Inject constructor(
 
     val savedNews = dao.getAllArticles()
 
-    suspend fun delete(article: Article) {
-        dao.deleteArticle(article)
-    }
+    suspend fun delete(articleUrl: String) = dao.deleteArticleByUrl(articleUrl)
 }
