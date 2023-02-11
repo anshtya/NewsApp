@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
+import com.example.newsapp.data.local.BookmarkedArticle
 import com.example.newsapp.databinding.FragmentSavedNewsBinding
-import com.example.newsapp.data.network.model.Article
-import com.example.newsapp.viewmodel.NewsViewModel
+import com.example.newsapp.ui.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -67,7 +67,7 @@ class SavedNewsFragment : Fragment() {
                 viewModel.deleteArticle(article.url)
                 Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
                     setAction("Undo"){
-                        viewModel.saveArticle(article)
+                        viewModel.insertBookmarkArticle(article)
                     }
                     show()
                 }
@@ -89,9 +89,9 @@ class SavedNewsFragment : Fragment() {
         }
     }
 
-    private fun onClick(article: Article){
+    private fun onClick(bookmarkedArticle: BookmarkedArticle){
         val bundle = Bundle().apply {
-            putSerializable("article", article)
+            putSerializable("bookmarkedArticle", bookmarkedArticle)
         }
         findNavController().navigate(
             R.id.action_savedNewsFragment_to_articleFragment,

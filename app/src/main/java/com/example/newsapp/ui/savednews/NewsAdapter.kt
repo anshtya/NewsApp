@@ -6,25 +6,26 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.newsapp.data.local.BookmarkedArticle
 import com.example.newsapp.databinding.ItemArticlePreviewBinding
-import com.example.newsapp.data.network.model.Article
 
-class NewsAdapter(private val onClick: (Article) -> Unit):
-    ListAdapter<Article, NewsAdapter.ArticleViewHolder>(DifferCallback) {
+class NewsAdapter(private val onClick: (BookmarkedArticle) -> Unit) :
+    ListAdapter<BookmarkedArticle, NewsAdapter.ArticleViewHolder>(DifferCallback) {
 
-    inner class ArticleViewHolder(private val binding: ItemArticlePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ArticleViewHolder(private val binding: ItemArticlePreviewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        private var currentArticle: Article? = null
+        private var currentArticle: BookmarkedArticle? = null
 
         init {
             itemView.setOnClickListener {
-                currentArticle?.let{ article ->
+                currentArticle?.let { article ->
                     onClick(article)
                 }
             }
         }
 
-        fun bind(article: Article){
+        fun bind(article: BookmarkedArticle) {
             currentArticle = article
             binding.apply {
                 Glide.with(itemView.context).load(article.urlToImage).into(ivArticleImage)
@@ -36,13 +37,19 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
         }
     }
 
-    companion object{
-        private val DifferCallback = object: DiffUtil.ItemCallback<Article>(){
-            override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
+    companion object {
+        private val DifferCallback = object : DiffUtil.ItemCallback<BookmarkedArticle>() {
+            override fun areItemsTheSame(
+                oldItem: BookmarkedArticle,
+                newItem: BookmarkedArticle
+            ): Boolean {
                 return oldItem.url == newItem.url
             }
 
-            override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
+            override fun areContentsTheSame(
+                oldItem: BookmarkedArticle,
+                newItem: BookmarkedArticle
+            ): Boolean {
                 return oldItem == newItem
             }
 
@@ -50,7 +57,8 @@ class NewsAdapter(private val onClick: (Article) -> Unit):
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        val binding =  ItemArticlePreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemArticlePreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ArticleViewHolder(binding)
     }
 

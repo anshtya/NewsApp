@@ -45,6 +45,13 @@
         android:label="ArticleFragment" >
         <argument
             android:name="article"
-            app:argType="com.example.newsapp.data.network.model.Article" />
+            app:argType="com.example.newsapp.data.network.model.Article"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="bookmarkArticle"
+            app:argType="com.example.newsapp.data.local.BookmarkedArticle"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

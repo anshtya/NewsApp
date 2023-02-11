@@ -1,11 +1,11 @@
-package com.example.newsapp.data.article
+package com.example.newsapp.data.network.breakingnews.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.newsapp.data.network.model.Article
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ArticleDao {
@@ -14,8 +14,8 @@ interface ArticleDao {
     suspend fun insert(article: Article)
 
     @Query("SELECT * FROM articles")
-    fun getAllArticles(): Flow<List<Article>>
+    fun getAllArticles(): PagingSource<Int, Article>
 
-    @Query("DELETE FROM articles WHERE url = :articleUrl")
-    suspend fun deleteArticleByUrl(articleUrl: String)
+    @Query("DELETE FROM articles")
+    suspend fun deleteAllArticles()
 }

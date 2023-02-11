@@ -1,4 +1,4 @@
-package com.example.newsapp.data.network
+package com.example.newsapp.data.network.searchNews
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

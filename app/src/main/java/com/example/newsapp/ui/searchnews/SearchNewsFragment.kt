@@ -18,7 +18,7 @@ import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.ui.adapters.NewsLoadStateAdapter
-import com.example.newsapp.viewmodel.NewsViewModel
+import com.example.newsapp.ui.NewsViewModel
 import com.example.newsapp.ui.adapters.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
