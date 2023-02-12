@@ -2,12 +2,15 @@
 
 # NewsApp
 
-Work in Progress 🚧
+News app created using Kotlin. This app uses [NewsAPI](https://newsapi.org/) for displaying and searching news.
 
-News app created using Kotlin. This app uses NewsAPI for displaying and searching news and bookmark news articles.
+## 👨‍💻Tech Stack
+- <a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVVM Architecture</a> - Seperating UI from business logic.
+- <a href="https://developer.android.com/training/dependency-injection/hilt-android">Hilt</a> - Dependency injection library.
+- <a href="https://developer.android.com/training/data-storage/room">Room</a> - Provides an abstraction layer over SQLite used for offline data caching.
+- <a href="https://developer.android.com/kotlin/flow">Flow</a> and <a href="https://developer.android.com/kotlin/coroutines">Coroutines</a> - Perform asynchronous programming.
 
-
-## Installation
+## 🖥️Installation
 
 To clone the project, run
 
