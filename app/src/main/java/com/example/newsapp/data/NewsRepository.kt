@@ -5,9 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.newsapp.data.network.breakingnews.dao.ArticleDao
-import com.example.newsapp.data.local.ArticleDatabase
-import com.example.newsapp.data.local.BookmarkedArticle
-import com.example.newsapp.data.local.BookmarkedArticleDao
+import com.example.newsapp.data.db.ArticleDatabase
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.data.network.api.NewsApi
 import com.example.newsapp.data.network.searchNews.SearchNewsPagingSource
@@ -21,7 +19,6 @@ class NewsRepository @Inject constructor(
     private val db: ArticleDatabase,
     private val articleDao: ArticleDao,
     private val remoteKeyDao: RemoteKeyDao,
-    private val bookmarkedArticleDao: BookmarkedArticleDao,
     private val newsApi: NewsApi
 ) {
     @OptIn(ExperimentalPagingApi::class)
@@ -49,12 +46,4 @@ class NewsRepository @Inject constructor(
             pagingSourceFactory = { SearchNewsPagingSource(newsApi, query) }
         ).flow
     }
-
-    val savedNews = bookmarkedArticleDao.getAllBookmarkedArticles()
-
-    suspend fun insertBookmarkArticle(bookmarkedArticle: BookmarkedArticle) =
-        bookmarkedArticleDao.insertBookmarkArticle(bookmarkedArticle)
-
-    suspend fun deleteBookmarkedArticle(articleUrl: String) =
-        bookmarkedArticleDao.deleteBookmarkedArticleByUrl(articleUrl)
 }

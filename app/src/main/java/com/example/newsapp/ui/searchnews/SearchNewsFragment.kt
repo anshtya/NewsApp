@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchNewsFragment : Fragment() {
+class SearchNewsFragment : Fragment(){
 
     private val viewModel: NewsViewModel by activityViewModels()
     private lateinit var binding: FragmentSearchNewsBinding

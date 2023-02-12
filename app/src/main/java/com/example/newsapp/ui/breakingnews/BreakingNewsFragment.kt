@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class BreakingNewsFragment : Fragment() {
+class BreakingNewsFragment : Fragment(){
 
     private val viewModel: NewsViewModel by activityViewModels()
     private lateinit var binding: FragmentBreakingNewsBinding
