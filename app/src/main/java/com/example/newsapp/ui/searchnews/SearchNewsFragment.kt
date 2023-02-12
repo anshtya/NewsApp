@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -92,31 +93,11 @@ class SearchNewsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycleScope.launch {
                 pagingNewsAdapter.loadStateFlow.collectLatest { newsLoadState ->
-                    when (newsLoadState.source.refresh) {
-                        is LoadState.Error -> {
-                            binding.apply {
-                                progressBar.visibility = View.INVISIBLE
-                                btRetry.visibility = View.VISIBLE
-                                tvError.visibility = View.VISIBLE
-                                rvSearchNews.visibility = View.INVISIBLE
-                            }
-                        }
-                        is LoadState.Loading -> {
-                            binding.apply {
-                                rvSearchNews.visibility = View.INVISIBLE
-                                tvError.visibility = View.INVISIBLE
-                                btRetry.visibility = View.INVISIBLE
-                                progressBar.visibility = View.VISIBLE
-                            }
-                        }
-                        is LoadState.NotLoading -> {
-                            binding.apply {
-                                progressBar.visibility = View.INVISIBLE
-                                btRetry.visibility = View.INVISIBLE
-                                tvError.visibility = View.INVISIBLE
-                                rvSearchNews.visibility = View.VISIBLE
-                            }
-                        }
+                    binding.apply {
+                        progressBar.isVisible = newsLoadState.source.refresh is LoadState.Loading
+                        btRetry.isVisible = newsLoadState.source.refresh is LoadState.Error
+                        tvError.isVisible = btRetry.isVisible
+                        rvSearchNews.isVisible = newsLoadState.source.prepend is LoadState.NotLoading
                     }
                 }
             }

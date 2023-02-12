@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -54,28 +55,10 @@ class BreakingNewsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycleScope.launch {
                 pagingNewsAdapter.loadStateFlow.collect { newsLoadState ->
-                    when (newsLoadState.source.refresh) {
-                        is LoadState.Error -> {
-                            binding.apply {
-                                progressBar.visibility = View.INVISIBLE
-                                btRetry.visibility = View.VISIBLE
-                                tvError.visibility = View.VISIBLE
-                            }
-                        }
-                        is LoadState.Loading -> {
-                            binding.apply {
-                                progressBar.visibility = View.VISIBLE
-                                btRetry.visibility = View.INVISIBLE
-                                tvError.visibility = View.INVISIBLE
-                            }
-                        }
-                        is LoadState.NotLoading -> {
-                            binding.apply {
-                                progressBar.visibility = View.INVISIBLE
-                                btRetry.visibility = View.INVISIBLE
-                                tvError.visibility = View.INVISIBLE
-                            }
-                        }
+                    binding.apply {
+                        progressBar.isVisible = newsLoadState.mediator?.refresh is LoadState.Loading
+                        btRetry.isVisible = newsLoadState.mediator?.refresh is LoadState.Error
+                        tvError.isVisible = btRetry.isVisible
                     }
                 }
             }
