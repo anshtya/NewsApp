@@ -21,7 +21,4 @@ interface ArticleDao {
 
     @Query("DELETE FROM articles")
     suspend fun deleteAllArticles()
-
-    @Query("UPDATE articles SET isBookmarked =:isBookmarked where url =:articleUrl")
-    suspend fun updateBookmarkedStatus(articleUrl: String, isBookmarked: Boolean)
 }

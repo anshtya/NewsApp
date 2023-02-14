@@ -9,7 +9,8 @@ import java.io.Serializable
     tableName = "bookmarked_news"
 )
 data class BookmarkedArticle(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null,
     val url: String,
     val author: String?,
     val content: String?,

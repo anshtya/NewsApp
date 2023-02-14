@@ -61,7 +61,6 @@ class NewsRepository @Inject constructor(
 
     suspend fun updateBookmarkedStatus(articleUrl: String, isBookmarked: Boolean) {
         articleDao.apply {
-            updateBookmarkedStatus(articleUrl, isBookmarked)
             if (isBookmarked) {
                 insertBookmarkedArticle(getArticleByUrl(articleUrl).toBookmarkArticle(isBookmarked))
             } else {
