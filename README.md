@@ -10,6 +10,11 @@ News app created using Kotlin. This app uses [NewsAPI](https://newsapi.org/) for
 - <a href="https://developer.android.com/training/data-storage/room">Room</a> - Provides an abstraction layer over SQLite used for offline data caching.
 - <a href="https://developer.android.com/kotlin/flow">Flow</a> and <a href="https://developer.android.com/kotlin/coroutines">Coroutines</a> - Perform asynchronous programming.
 
+## 📸 Screenshots
+||||
+|---|---|---|
+| ![news](/screenshots/news.png) | ![saved](/screenshots/saved.png) | ![search](/screenshots/search.png) |
+
 ## 🖥️Installation
 
 To clone the project, run
