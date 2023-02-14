@@ -2,8 +2,9 @@ package com.example.newsapp.ui.bookmarkednews
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp.data.NewsRepository
 import com.example.newsapp.data.local.BookmarkedArticle
+import com.example.newsapp.data.network.model.Article
+import com.example.newsapp.data.repositories.BookmarkedNewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -12,24 +13,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkedNewsViewModel @Inject constructor(
-    private val newsRepository: NewsRepository
+    private val bookmarkedNewsRepository: BookmarkedNewsRepository
 ): ViewModel() {
 
-    val bookmarkedNews = newsRepository.bookmarkedNews.stateIn(
+    val bookmarkedNews = bookmarkedNewsRepository.bookmarkedNews.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = emptyList()
     )
 
     fun deleteBookmarkedArticle(articleUrl: String) = viewModelScope.launch {
-        newsRepository.deleteBookmarkedArticle(articleUrl)
+        bookmarkedNewsRepository.deleteBookmarkedArticle(articleUrl)
     }
 
     fun insertBookmarkedArticle(bookmarkedArticle: BookmarkedArticle) = viewModelScope.launch {
-        newsRepository.insertBookmarkedArticle(bookmarkedArticle)
+        bookmarkedNewsRepository.insertBookmarkedArticle(bookmarkedArticle)
     }
 
-    fun updateBookmarkStatus(articleUrl: String, isBookmarked: Boolean) = viewModelScope.launch {
-        newsRepository.updateBookmarkedStatus(articleUrl, isBookmarked)
+    fun updateBookmarkStatus(article: Article, isBookmarked: Boolean) = viewModelScope.launch {
+        bookmarkedNewsRepository.updateBookmarkedStatus(article, isBookmarked)
     }
 }

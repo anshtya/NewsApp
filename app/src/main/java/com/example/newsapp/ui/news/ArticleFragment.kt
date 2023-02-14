@@ -51,12 +51,12 @@ class ArticleFragment : Fragment() {
             }
 
             fab.setOnClickListener {
-                article.let {
-                    if (it.isBookmarked) {
-                        viewModel.updateBookmarkStatus(it.url, isBookmarked = false)
+                article.let {article ->
+                    if (article.isBookmarked) {
+                        viewModel.updateBookmarkStatus(article, isBookmarked = false)
                         fab.setImageResource(R.drawable.ic_bookmark_border)
                     } else {
-                        viewModel.updateBookmarkStatus(it.url, isBookmarked = true)
+                        viewModel.updateBookmarkStatus(article, isBookmarked = true)
                         fab.setImageResource(R.drawable.ic_bookmarked)
                     }
                 }
