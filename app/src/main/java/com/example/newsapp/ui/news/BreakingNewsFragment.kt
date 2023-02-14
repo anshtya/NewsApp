@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.breakingnews
+package com.example.newsapp.ui.news
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentBreakingNewsBinding
 import com.example.newsapp.data.network.model.Article
-import com.example.newsapp.ui.NewsViewModel
-import com.example.newsapp.ui.adapters.NewsLoadStateAdapter
-import com.example.newsapp.ui.adapters.PagingNewsAdapter
+import com.example.newsapp.ui.news.adapters.NewsLoadStateAdapter
+import com.example.newsapp.ui.news.adapters.PagingNewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

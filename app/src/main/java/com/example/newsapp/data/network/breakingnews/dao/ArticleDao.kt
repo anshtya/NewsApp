@@ -16,6 +16,12 @@ interface ArticleDao {
     @Query("SELECT * FROM articles")
     fun getAllArticles(): PagingSource<Int, Article>
 
+    @Query("SELECT * FROM articles where url =:articleUrl")
+    suspend fun getArticleByUrl(articleUrl: String): Article
+
     @Query("DELETE FROM articles")
     suspend fun deleteAllArticles()
+
+    @Query("UPDATE articles SET isBookmarked =:isBookmarked where url =:articleUrl")
+    suspend fun updateBookmarkedStatus(articleUrl: String, isBookmarked: Boolean)
 }

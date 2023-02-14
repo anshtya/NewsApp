@@ -3,6 +3,7 @@ package com.example.newsapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.newsapp.data.db.ArticleDatabase
+import com.example.newsapp.data.local.BookmarkedNewsDao
 import com.example.newsapp.data.network.breakingnews.dao.ArticleDao
 import com.example.newsapp.data.network.breakingnews.dao.RemoteKeyDao
 import dagger.Module
@@ -32,4 +33,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideRemoteKeyDao(db: ArticleDatabase): RemoteKeyDao = db.getRemoteKeyDao()
+
+    @Provides
+    @Singleton
+    fun provideBookmarkedNewsDao(db: ArticleDatabase): BookmarkedNewsDao = db.getBookmarkedNewsDao()
 }

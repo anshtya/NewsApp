@@ -6,12 +6,15 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.newsapp.data.network.breakingnews.dao.ArticleDao
 import com.example.newsapp.data.db.ArticleDatabase
+import com.example.newsapp.data.local.BookmarkedArticle
+import com.example.newsapp.data.local.BookmarkedNewsDao
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.data.network.api.NewsApi
 import com.example.newsapp.data.network.searchNews.SearchNewsPagingSource
 import com.example.newsapp.data.network.breakingnews.BreakingNewsRemoteMediator
 import com.example.newsapp.data.network.breakingnews.dao.RemoteKeyDao
 import com.example.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
+import com.example.newsapp.util.Mapper.Companion.toBookmarkArticle
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -19,6 +22,7 @@ class NewsRepository @Inject constructor(
     private val db: ArticleDatabase,
     private val articleDao: ArticleDao,
     private val remoteKeyDao: RemoteKeyDao,
+    private val bookmarkedNewsDao: BookmarkedNewsDao,
     private val newsApi: NewsApi
 ) {
     @OptIn(ExperimentalPagingApi::class)
@@ -45,5 +49,24 @@ class NewsRepository @Inject constructor(
             ),
             pagingSourceFactory = { SearchNewsPagingSource(newsApi, query) }
         ).flow
+    }
+
+    val bookmarkedNews = bookmarkedNewsDao.getAllBookmarkedArticles()
+
+    suspend fun deleteBookmarkedArticle(articleUrl: String) =
+        bookmarkedNewsDao.deleteBookmarkedArticleByUrl(articleUrl)
+
+    suspend fun insertBookmarkedArticle(bookmarkedArticle: BookmarkedArticle) =
+        bookmarkedNewsDao.insertBookmarkArticle(bookmarkedArticle)
+
+    suspend fun updateBookmarkedStatus(articleUrl: String, isBookmarked: Boolean) {
+        articleDao.apply {
+            updateBookmarkedStatus(articleUrl, isBookmarked)
+            if (isBookmarked) {
+                insertBookmarkedArticle(getArticleByUrl(articleUrl).toBookmarkArticle(isBookmarked))
+            } else {
+                deleteBookmarkedArticle(articleUrl)
+            }
+        }
     }
 }

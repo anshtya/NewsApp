@@ -2,7 +2,7 @@
 
 # NewsApp
 
-News app created using Kotlin. This app uses [NewsAPI](https://newsapi.org/) for displaying and searching news.
+News app created using Kotlin. This app uses [NewsAPI](https://newsapi.org/) for displaying and searching news. You can also bookmark news articles.
 
 ## 👨‍💻Tech Stack
 - <a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVVM Architecture</a> - Seperating UI from business logic.
