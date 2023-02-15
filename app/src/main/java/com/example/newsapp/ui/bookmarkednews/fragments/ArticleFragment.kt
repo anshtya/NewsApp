@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.news
+package com.example.newsapp.ui.bookmarkednews.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,11 +8,15 @@ import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentArticleBinding
 import com.example.newsapp.ui.bookmarkednews.BookmarkedNewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ArticleFragment : Fragment() {
@@ -34,6 +38,9 @@ class ArticleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val article = args.article
+        viewModel.getBookmarkStatus(article.url)
+
+        var openedFromBookmarks = false
 
         binding.apply {
             webView.apply {
@@ -42,23 +49,27 @@ class ArticleFragment : Fragment() {
                 settings.javaScriptEnabled = true
             }
 
-            article.let {
-                if (it.isBookmarked) {
-                    fab.setImageResource(R.drawable.ic_bookmarked)
-                } else {
-                    fab.setImageResource(R.drawable.ic_bookmark_border)
+            viewLifecycleOwner.lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.bookmarkedStatus.collect { isBookmarked ->
+                        openedFromBookmarks = if (isBookmarked != null) {
+                            fab.setImageResource(R.drawable.ic_bookmarked)
+                            true
+                        } else {
+                            fab.setImageResource(R.drawable.ic_bookmark_border)
+                            false
+                        }
+                    }
                 }
             }
 
             fab.setOnClickListener {
-                article.let {article ->
-                    if (article.isBookmarked) {
-                        viewModel.updateBookmarkStatus(article, isBookmarked = false)
-                        fab.setImageResource(R.drawable.ic_bookmark_border)
-                    } else {
-                        viewModel.updateBookmarkStatus(article, isBookmarked = true)
-                        fab.setImageResource(R.drawable.ic_bookmarked)
-                    }
+                if (openedFromBookmarks) {
+                    viewModel.updateBookmarkStatus(article, isBookmarked = false)
+                    fab.setImageResource(R.drawable.ic_bookmark_border)
+                } else {
+                    viewModel.updateBookmarkStatus(article, isBookmarked = true)
+                    fab.setImageResource(R.drawable.ic_bookmarked)
                 }
             }
         }

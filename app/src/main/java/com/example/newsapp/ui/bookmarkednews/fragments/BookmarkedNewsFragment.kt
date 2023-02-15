@@ -1,9 +1,10 @@
-package com.example.newsapp.ui.bookmarkednews
+package com.example.newsapp.ui.bookmarkednews.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.data.local.BookmarkedArticle
 import com.example.newsapp.databinding.FragmentBookmarkedNewsBinding
+import com.example.newsapp.ui.bookmarkednews.BookmarkedNewsAdapter
+import com.example.newsapp.ui.bookmarkednews.BookmarkedNewsViewModel
 import com.example.newsapp.util.Mapper.Companion.toArticle
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,8 +46,9 @@ class BookmarkedNewsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.bookmarkedNews.collectLatest{ articles ->
+                viewModel.bookmarkedNews.collectLatest { articles ->
                     newsAdapter.submitList(articles)
+                    binding.tvNoBookmarks.isVisible = articles.isEmpty()
                 }
             }
         }
@@ -66,7 +70,7 @@ class BookmarkedNewsFragment : Fragment() {
                 val article = newsAdapter.currentList[position]
                 viewModel.deleteBookmarkedArticle(article.url)
                 Snackbar.make(view, "Article deleted successfully", Snackbar.LENGTH_SHORT).apply {
-                    setAction("Undo"){
+                    setAction("Undo") {
                         viewModel.insertBookmarkedArticle(article)
                     }
                     show()
@@ -79,7 +83,7 @@ class BookmarkedNewsFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView(){
+    private fun setupRecyclerView() {
         newsAdapter = BookmarkedNewsAdapter { bookmarkArticle ->
             onClick(bookmarkArticle)
         }
@@ -89,7 +93,7 @@ class BookmarkedNewsFragment : Fragment() {
         }
     }
 
-    private fun onClick(bookmarkArticle: BookmarkedArticle){
+    private fun onClick(bookmarkArticle: BookmarkedArticle) {
         val bundle = Bundle().apply {
             putSerializable("article", bookmarkArticle.toArticle())
         }

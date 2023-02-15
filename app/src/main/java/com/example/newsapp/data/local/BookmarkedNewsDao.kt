@@ -17,4 +17,7 @@ interface BookmarkedNewsDao {
 
     @Query("DELETE FROM bookmarked_news WHERE url = :articleUrl")
     suspend fun deleteBookmarkedArticleByUrl(articleUrl: String)
+
+    @Query("SELECT isBookmarked FROM bookmarked_news WHERE url =:articleUrl ")
+    suspend fun getBookmarkedStatus(articleUrl: String): Boolean?
 }

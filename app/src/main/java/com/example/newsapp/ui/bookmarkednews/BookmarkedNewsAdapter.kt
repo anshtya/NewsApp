@@ -39,7 +39,7 @@ class BookmarkedNewsAdapter (private val onClick: (BookmarkedArticle) -> Unit):
     companion object{
         private val DifferCallback = object: DiffUtil.ItemCallback<BookmarkedArticle>(){
             override fun areItemsTheSame(oldItem: BookmarkedArticle, newItem: BookmarkedArticle): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.url == newItem.url
             }
 
             override fun areContentsTheSame(oldItem: BookmarkedArticle, newItem: BookmarkedArticle): Boolean {

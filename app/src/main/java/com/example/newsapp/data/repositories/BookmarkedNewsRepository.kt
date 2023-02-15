@@ -17,6 +17,9 @@ class BookmarkedNewsRepository @Inject constructor(
     suspend fun insertBookmarkedArticle(bookmarkedArticle: BookmarkedArticle) =
         bookmarkedNewsDao.insertBookmarkArticle(bookmarkedArticle)
 
+    suspend fun getBookmarkedStatus(articleUrl: String) =
+        bookmarkedNewsDao.getBookmarkedStatus(articleUrl)
+
     suspend fun updateBookmarkedStatus(article: Article, isBookmarked: Boolean) {
         if (isBookmarked) {
             insertBookmarkedArticle(
