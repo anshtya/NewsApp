@@ -16,6 +16,7 @@ import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentArticleBinding
 import com.example.newsapp.ui.bookmarkednews.BookmarkedNewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -38,38 +39,40 @@ class ArticleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val article = args.article
+        var openedFromBookmarks = false
         viewModel.getBookmarkStatus(article.url)
 
-        var openedFromBookmarks = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.bookmarkedStatus.collectLatest { isBookmarked ->
+                    openedFromBookmarks = if (isBookmarked == true) {
+                        binding.fab.setImageResource(R.drawable.ic_bookmarked)
+                        true
+                    } else {
+                        binding.fab.setImageResource(R.drawable.ic_bookmark_border)
+                        false
+                    }
+                }
+            }
+        }
 
         binding.apply {
+
             webView.apply {
                 loadUrl(article.url)
                 webViewClient = WebViewClient()
                 settings.javaScriptEnabled = true
             }
 
-            viewLifecycleOwner.lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.bookmarkedStatus.collect { isBookmarked ->
-                        openedFromBookmarks = if (isBookmarked != null) {
-                            fab.setImageResource(R.drawable.ic_bookmarked)
-                            true
-                        } else {
-                            fab.setImageResource(R.drawable.ic_bookmark_border)
-                            false
-                        }
-                    }
-                }
-            }
-
             fab.setOnClickListener {
-                if (openedFromBookmarks) {
+                openedFromBookmarks = if (openedFromBookmarks) {
                     viewModel.updateBookmarkStatus(article, isBookmarked = false)
                     fab.setImageResource(R.drawable.ic_bookmark_border)
+                    false
                 } else {
                     viewModel.updateBookmarkStatus(article, isBookmarked = true)
                     fab.setImageResource(R.drawable.ic_bookmarked)
+                    true
                 }
             }
         }
