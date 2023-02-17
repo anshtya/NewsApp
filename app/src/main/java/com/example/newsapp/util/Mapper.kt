@@ -6,7 +6,7 @@ import com.example.newsapp.data.network.model.Article
 class Mapper {
 
     companion object{
-        fun Article.toBookmarkArticle(isBookmarked: Boolean) = BookmarkedArticle(
+        fun Article.toBookmarkArticle() = BookmarkedArticle(
             url = url,
             author = author,
             content = content,
@@ -14,7 +14,7 @@ class Mapper {
             source = source,
             title = title,
             urlToImage = urlToImage,
-            isBookmarked = isBookmarked
+            isBookmarked = true
         )
 
         fun BookmarkedArticle.toArticle() = Article(

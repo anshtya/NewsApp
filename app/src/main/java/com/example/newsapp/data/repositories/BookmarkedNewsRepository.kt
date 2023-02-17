@@ -23,7 +23,7 @@ class BookmarkedNewsRepository @Inject constructor(
     suspend fun updateBookmarkedStatus(article: Article, isBookmarked: Boolean) {
         if (isBookmarked) {
             insertBookmarkedArticle(
-                article.toBookmarkArticle(isBookmarked)
+                article.toBookmarkArticle()
             )
         } else {
             deleteBookmarkedArticle(article.url)
