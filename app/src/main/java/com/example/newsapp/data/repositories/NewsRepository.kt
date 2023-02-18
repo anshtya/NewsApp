@@ -30,9 +30,7 @@ class NewsRepository @Inject constructor(
             ),
             remoteMediator = BreakingNewsRemoteMediator(
                 newsApi,
-                db,
-                articleDao,
-                db.getRemoteKeyDao()
+                db
             ),
             pagingSourceFactory = { articleDao.getAllArticles() }
         ).flow

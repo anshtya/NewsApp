@@ -16,10 +16,11 @@ import com.example.newsapp.util.Constants.Companion.COUNTRY_CODE
 @OptIn(ExperimentalPagingApi::class)
 class BreakingNewsRemoteMediator(
     private val newsApi: NewsApi,
-    private val database: ArticleDatabase,
-    private val articleDao: ArticleDao,
-    private val remoteKeyDao: RemoteKeyDao
+    private val database: ArticleDatabase
 ) : RemoteMediator<Int, Article>() {
+
+    private val remoteKeyDao: RemoteKeyDao = database.getRemoteKeyDao()
+    private val articleDao: ArticleDao = database.getArticleDao()
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, Article>
