@@ -5,7 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.newsapp.data.db.ArticleDatabase
+import com.example.newsapp.data.local.db.ArticleDatabase
 import com.example.newsapp.data.network.api.NewsApi
 import com.example.newsapp.data.network.breakingnews.dao.ArticleDao
 import com.example.newsapp.data.network.breakingnews.dao.RemoteKeyDao

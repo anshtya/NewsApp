@@ -1,6 +1,6 @@
 package com.example.newsapp.data.local
 
-import com.example.newsapp.data.db.ArticleDatabase
+import com.example.newsapp.data.local.db.ArticleDatabase
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.data.network.model.Source
 import com.example.newsapp.util.Mapper.Companion.toBookmarkArticle

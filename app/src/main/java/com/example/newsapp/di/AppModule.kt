@@ -2,9 +2,9 @@ package com.example.newsapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.newsapp.data.db.ArticleDatabase
+import com.example.newsapp.data.local.db.ArticleDatabase
 import com.example.newsapp.data.network.api.NewsApi
-import com.example.newsapp.data.repositories.BookmarkedNewsRepository
+import com.example.newsapp.data.local.repository.BookmarkedNewsRepository
 import com.example.newsapp.util.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides

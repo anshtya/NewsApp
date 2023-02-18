@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.data.local.BookmarkedArticle
 import com.example.newsapp.data.network.model.Article
-import com.example.newsapp.data.repositories.BookmarkedNewsRepository
+import com.example.newsapp.data.local.repository.BookmarkedNewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

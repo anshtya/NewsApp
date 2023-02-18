@@ -1,10 +1,10 @@
-package com.example.newsapp.data.repositories
+package com.example.newsapp.data.network.repository
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.newsapp.data.db.ArticleDatabase
+import com.example.newsapp.data.local.db.ArticleDatabase
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.data.network.api.NewsApi
 import com.example.newsapp.data.network.searchNews.SearchNewsPagingSource

@@ -1,4 +1,4 @@
-package com.example.newsapp.data.repositories
+package com.example.newsapp.data.local.repository
 
 import com.example.newsapp.data.local.BookmarkedArticle
 import com.example.newsapp.data.local.BookmarkedNewsDao
