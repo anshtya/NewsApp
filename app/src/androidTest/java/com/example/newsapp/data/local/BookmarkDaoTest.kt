@@ -1,29 +1,33 @@
 package com.example.newsapp.data.local
 
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import com.example.newsapp.data.db.ArticleDatabase
 import com.example.newsapp.data.network.model.Article
 import com.example.newsapp.data.network.model.Source
 import com.example.newsapp.util.Mapper.Companion.toBookmarkArticle
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
+@HiltAndroidTest
 class BookmarkDaoTest {
 
+    @get:Rule
+    val hiltAndroidRule = HiltAndroidRule(this)
+
+    @Inject
     lateinit var articleDatabase: ArticleDatabase
     lateinit var bookmarkedNewsDao: BookmarkedNewsDao
 
     @Before
     fun setUp() {
-        articleDatabase = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            ArticleDatabase::class.java
-        ).build()
+        hiltAndroidRule.inject()
         bookmarkedNewsDao = articleDatabase.getBookmarkedNewsDao()
     }
 
