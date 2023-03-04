@@ -95,7 +95,7 @@ class BookmarkedNewsFragment : Fragment() {
 
     private fun onClick(bookmarkArticle: BookmarkedArticle) {
         val bundle = Bundle().apply {
-            putSerializable("article", bookmarkArticle.toArticle())
+            putParcelable("article", bookmarkArticle.toArticle())
         }
         findNavController().navigate(
             R.id.action_bookmarkedNewsFragment_to_articleFragment,

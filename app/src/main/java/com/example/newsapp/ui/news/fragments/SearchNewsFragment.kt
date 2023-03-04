@@ -116,7 +116,7 @@ class SearchNewsFragment : Fragment(){
 
     private fun onClick(article: Article) {
         val bundle = Bundle().apply {
-            putSerializable("article", article)
+            putParcelable("article", article)
         }
         findNavController().navigate(
             R.id.action_searchNewsFragment_to_articleFragment,

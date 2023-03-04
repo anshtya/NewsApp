@@ -1,12 +1,15 @@
 package com.example.newsapp.data.network.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "articles"
 )
+
+@Parcelize
 data class Article(
     @PrimaryKey
     val url: String,
@@ -17,4 +20,4 @@ data class Article(
     val title: String?,
     val urlToImage: String?,
     val isBookmarked: Boolean = false
-) : Serializable
+) : Parcelable
